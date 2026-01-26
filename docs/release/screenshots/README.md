@@ -1,0 +1,1 @@
+# Screenshots\n\nPlace Play Store screenshots here.\n\nRequired:\n- Phone: Minimum 2, recommended 8 (1080x1920 or 1440x2560)\n- 7-inch tablet: Optional (1200x1920)\n- 10-inch tablet: Optional (1800x2560)

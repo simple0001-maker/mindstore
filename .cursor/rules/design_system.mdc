@@ -1,0 +1,752 @@
+# 🎨 SnapSort Design System
+
+**Last Updated:** December 2025  
+**Status:** Active - Reference this document when building any UI  
+
+---
+
+## 🚨 CRITICAL: Use the Widget Library First
+
+**Before writing ANY UI code:**
+
+1. **Check the Widget Library:** `docs/WIDGET_LIBRARY.md`
+2. **Use existing widgets** - 90% of what you need already exists
+3. **Never create custom cards, dialogs, or buttons** - use the library
+4. **Follow branding rules:** `.cursor/rules/branding_rules.mdc`
+
+**Goal:** Every screen should look like it belongs to the same app.
+
+---
+
+## 📖 Required Reading
+
+**Before creating any UI, ALWAYS reference:**
+
+### 1. **Branding Rules** (`.cursor/rules/branding_rules.mdc`)
+- Product naming (SnapSort, not SnapSort SnapSort)
+- SnapSortAI vocabulary (never "generate", always "set" or "create")
+- User-friendly language (no technical jargon in UI)
+- Voice and tone guidelines
+
+### 2. **Widget Library** (`docs/WIDGET_LIBRARY.md`)
+- Complete catalog of all available widgets
+- Usage examples for cards, dialogs, buttons, etc.
+- When to use which widget
+- Import paths
+
+---
+
+## 🎨 Icon System
+
+**CRITICAL: Use Font Awesome icons for all new development.**
+
+### Usage Rules
+
+```dart
+// ✅ CORRECT - Use Font Awesome for all new code
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+FaIcon(
+  FontAwesomeIcons.house,
+  size: 24,
+  color: colorScheme.primary,
+)
+
+// For solid/regular/light variants:
+FaIcon(FontAwesomeIcons.solidHeart)
+FaIcon(FontAwesomeIcons.regularHeart)
+
+// ❌ FORBIDDEN - Never use Material Icons
+Icon(Icons.home)  // Material Icons - DO NOT USE
+
+// ⚠️ LEGACY - SvgIcons is deprecated, use only for existing code
+SvgIcons.home(size: 24)  // LEGACY - Do not use in new features
+```
+
+### Icon Selection Guidelines
+
+**Font Awesome provides 30,000+ icons across different styles:**
+- **Solid** (default): Bold, filled icons for primary actions
+- **Regular**: Outlined icons for secondary elements
+- **Light/Thin**: Delicate icons (Pro only, but fallback to regular)
+- **Brands**: Social media and company logos
+
+**Finding the right icon:**
+1. Visit [fontawesome.com/icons](https://fontawesome.com/icons)
+2. Search for the concept (e.g., "book", "user", "chart")
+3. Use the Dart constant name: `FontAwesomeIcons.book` → becomes `FontAwesomeIcons.book`
+
+**Common Icon Patterns:**
+```dart
+// Navigation
+FaIcon(FontAwesomeIcons.house)          // Home
+FaIcon(FontAwesomeIcons.magnifyingGlass) // Search
+FaIcon(FontAwesomeIcons.user)           // Profile
+FaIcon(FontAwesomeIcons.gear)           // Settings
+
+// Academic (SnapSort-specific)
+FaIcon(FontAwesomeIcons.book)           // Courses
+FaIcon(FontAwesomeIcons.fileLines)      // Materials
+FaIcon(FontAwesomeIcons.graduationCap)  // Education
+FaIcon(FontAwesomeIcons.clipboardQuestion) // Exams
+
+// Actions
+FaIcon(FontAwesomeIcons.plus)           // Add
+FaIcon(FontAwesomeIcons.pen)            // Edit
+FaIcon(FontAwesomeIcons.trash)          // Delete
+FaIcon(FontAwesomeIcons.check)          // Confirm
+```
+
+### Legacy: SvgIcons (Deprecated)
+
+**DO NOT USE `SvgIcons` in new features.** It exists only to support existing code.
+
+The old `SvgIcons` class (`lib/core/icons/svg_icons.dart`) is now **legacy**. Do not refactor existing code, but always use Font Awesome for new development.
+
+Why we moved away from SvgIcons:
+- Hard to manage custom SVG files
+- Limited icon selection
+- Maintenance overhead
+- Font Awesome provides better coverage and consistency
+
+---
+
+## 📐 Design Philosophy
+
+SnapSort follows a **premium, layered design** inspired by modern education platforms:
+
+- ✅ **Professional & Polished** - Feels like a premium SaaS product
+- ✅ **Layered Depth** - Uses images, gradients, and shadows for visual hierarchy
+- ✅ **Consistent Patterns** - Same card structures everywhere
+- ✅ **Category-First** - Progressive disclosure from broad to specific
+- ✅ **Theme-Aware** - Seamlessly adapts to light/dark mode
+- ✅ **Icon-Driven** - Use Font Awesome icons, never emojis in UI
+- ✅ **Widget-Based** - Reuse widgets from the library, don't create custom ones
+
+---
+
+## 🎯 Core UI Principles
+
+### 1. **Use Existing Widgets** (Most Important)
+
+**NEVER create custom cards, dialogs, or buttons.** Use the widget library.
+
+```dart
+// ❌ BAD - Creating custom card
+Container(
+  decoration: BoxDecoration(...),
+  child: Row(
+    children: [/* Custom layout */],
+  ),
+)
+
+// ✅ GOOD - Using library widget
+InfoCard(
+  title: 'Title',
+  subtitle: 'Description',
+  isPageSection: true, // Default: wraps in PageSection for standalone usage
+  onTap: () {},
+)
+```
+
+**Adaptive Padding Rule:** 
+`InfoCard` automatically applies horizontal padding by wrapping in `PageSection` if `isPageSection` is `true`. 
+- **Set `isPageSection: true`** when using it as a standalone section on a page (e.g., home screen).
+- **Set `isPageSection: false`** when using it inside a list or a container that already has horizontal padding (e.g., inside a `Column` or `ListView` with padding).
+
+**See:** `docs/WIDGET_LIBRARY.md` for all available widgets.
+
+### 2. **Standard Layout Pattern**
+
+All components follow this layout for maximum text space:
+
+```
+┌──────────────────────────────────────────────┐
+│ [Icon] Title                     [Trailing]  │
+│ Long Subtitle                                     │
+│ Metadata                                      │
+└──────────────────────────────────────────────┘
+```
+
+**Key points:**
+- **Icon + Title in same row** - Icon (32-36px) sits next to title horizontally
+- **Subtitle starts at icon position** - Aligns with icon's left edge
+- **Trailing at top right** - Action chevron or status badge
+- **More space for text** - No separate leading column
+Metadata     can be another well desgined wigets
+
+**Example (like InfoCard):**
+```dart
+Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // Icon badge (32-36px)
+    Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: colorScheme.primary.withOpacity(0.12),
+      ),
+      child: FaIcon(
+        FontAwesomeIcons.book,
+        size: 18,
+        color: colorScheme.primary,
+      ),
+    ),
+    SizedBox(width: 12),
+    
+    // Text column (title + subtitle)
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title in same row as icon
+          Text(title, style: titleMedium),
+          SizedBox(height: 4),
+          // Subtitle below, aligned with icon
+          Text(subtitle, style: bodySmall),
+        ],
+      ),
+    ),
+    
+    // Trailing at top right
+    FaIcon(FontAwesomeIcons.chevronRight, size: 16),
+  ],
+)
+```
+
+**Use library widgets** - `InfoCard`, `IconListCard` implement this pattern correctly.
+
+### 3. **Responsive Design for Desktop & Web**
+
+**Always wrap content in `ResponsiveContainer` for desktop/web support:**
+
+```dart
+import 'package:learn/core/widgets/layout/responsive_container.dart';
+
+Scaffold(
+  body: ResponsiveContainer(
+    maxWidth: 1200,  // Max width for large screens
+    child: /* Your content */,
+  ),
+)
+```
+
+**Key Principles:**
+- **Mobile-first** - Design for mobile, adapt for larger screens
+- **Max width constraint** - Content shouldn't span entire width on desktop
+- **Centered layout** - Content centers on large screens
+- **Consistent padding** - Same padding scales across devices
+
+**Standard max widths (defined in AppStyles):**
+```dart
+import 'package:learn/core/theme/app_styles.dart';
+
+AppStyles.maxWidthSmallTablet  // 600
+AppStyles.maxWidthTablet        // 900
+AppStyles.maxWidthDesktop       // 1200 (default)
+AppStyles.maxWidthLarge         // 1600
+```
+
+**Use `ResponsiveScaffold` for full pages:**
+```dart
+import 'package:learn/core/widgets/responsive_scaffold.dart';
+
+ResponsiveScaffold(
+  body: /* Your content */,  // Auto-wrapped in ResponsiveContainer
+)
+```
+
+**Responsive Helpers (use these):**
+```dart
+import 'package:learn/core/theme/app_styles.dart';
+
+// Check device type
+if (AppStyles.isMobile(context)) { /* Mobile layout */ }
+if (AppStyles.isTablet(context)) { /* Tablet layout */ }
+if (AppStyles.isDesktop(context)) { /* Desktop layout */ }
+
+// Get adaptive values
+final padding = AppStyles.getAdaptivePadding(context);
+final columns = AppStyles.getGridColumns(context);
+
+// Responsive grid
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: AppStyles.getGridColumns(context),
+    childAspectRatio: 1.2,
+    crossAxisSpacing: AppStyles.spacingDefault,
+    mainAxisSpacing: AppStyles.spacingDefault,
+  ),
+  itemBuilder: (context, index) => /* Card */,
+)
+```
+
+### 4. **Container Hierarchy**
+
+Use `AppStyles` for all container styling:
+
+```dart
+import 'package:learn/core/theme/app_styles.dart';
+
+Container(
+  decoration: AppStyles.containerDecoration(
+    context,
+    level: ContainerLevel.level1,
+    borderRadius: 12,
+  ),
+)
+```
+
+**Hierarchy:**
+- **Level 0** (`surfaceContainerLow`): Main scaffold background
+- **Level 1** (`surfaceContainer`): Primary cards
+- **Level 2** (`surfaceContainerHigh`): Nested elements
+- **Level 3** (`surfaceContainerHighest`): Deep nested elements
+
+### 4. **Always Use AppBottomSheet**
+
+**NEVER use `showDialog` or raw `showModalBottomSheet`.**
+
+```dart
+// ❌ BAD
+showDialog(context: context, builder: (context) => AlertDialog(...))
+
+// ✅ GOOD
+import 'package:learn/core/widgets/dialogs/app_bottom_sheet.dart';
+
+AppBottomSheet.show(
+  context: context,
+  title: 'Options',
+  content: /* Content */,
+)
+```
+
+### 5. **Always Use AppPremiumHeader for Information Hierarchy**
+
+**NEVER use "header cards" or text in the body to describe what a page is for.** Use `AppPremiumHeader` to establish a clear information hierarchy with three levels:
+
+1.  **Context Label**: A small row at the top with an icon and text describing the page type/category.
+2.  **Achievement Title**: Large, cascading text describing the main goal or outcome for the user.
+3.  **Detailed Subtitle**: Clear explanation of how the user will achieve that goal.
+
+---
+
+#### ✅ **Recommended: Use Structured Parameters** (Enforces cascading text pattern)
+
+Use the dedicated parameters for consistent, beautiful headers:
+
+```dart
+AppPremiumHeader(
+  title: 'Page Title', // Required for accessibility
+  headerImageUrl: AppHeaders.courses,
+  showBackButton: true,
+  onBack: () => Navigator.pop(context),
+  // Structured content parameters
+  contextIcon: FaIcon(FontAwesomeIcons.book, size: 16, color: colorScheme.primary),
+  contextLabel: 'Course/Subject Management',
+  achievementTitlePrimary: 'Add a New',  // Larger, bolder
+  achievementTitleSecondary: 'Course/Subject',   // Slightly smaller, lighter
+  detailedSubtitle: 'Organize your studies by setting up a new academic course or subject.',
+)
+```
+
+**This automatically applies the cascading text pattern:**
+- **Context Label:** `titleSmall` with `fontWeight.w700`
+- **Primary Title:** `displaySmall` (30px) with `fontWeight.w900`
+- **Secondary Title:** `headlineMedium` (24px) with `fontWeight.w800`
+- **Subtitle:** `bodyMedium` with `fontWeight.w500`
+
+**Benefits:**
+- ✅ Consistent styling across all headers
+- ✅ Beautiful cascading text effect (like "Your academic life" / "at a glance")
+- ✅ Less code to write
+- ✅ Automatic theme compliance
+
+---
+
+#### 🔧 **Advanced: Use Custom Content** (For unique layouts only)
+
+If you need complete control over the layout (rare), use the `content` property:
+
+```dart
+AppPremiumHeader(
+  title: 'Page Title',
+  showBackButton: true,
+  onBack: () => Navigator.pop(context),
+  content: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      // Your completely custom layout here
+      // Use this ONLY when structured parameters don't fit your needs
+    ],
+  ),
+)
+```
+
+**⚠️ Only use `content` when:**
+- You need custom widgets (badges, buttons, etc.)
+- You're doing something very unique that doesn't fit the standard pattern
+- You've exhausted the structured parameters
+
+**For 95% of cases, use the structured parameters instead.**
+
+---
+
+**❌ Anti-Pattern:** Putting a title and description in a `Container` or `Card` at the top of the `SliverList`. Always use `AppPremiumHeader` for page context.
+
+---
+
+## 📐 AppStyles - Centralized Design Constants
+
+**ALWAYS use `AppStyles` for spacing, sizes, and responsive checks:**
+
+```dart
+import 'package:learn/core/theme/app_styles.dart';
+
+// ===== SPACING =====
+AppStyles.spacingMicro      // 4px - icon to text
+AppStyles.spacingSmall      // 8px - small gaps
+AppStyles.spacingDefault    // 12px - standard spacing
+AppStyles.spacingMedium     // 16px - card padding
+AppStyles.spacingLarge      // 20px - large padding
+AppStyles.spacingSection    // 24px - section spacing
+
+// ===== BORDER RADIUS =====
+AppStyles.radiusCard        // 12px - cards
+AppStyles.radiusChip        // 17px - chips/pills
+AppStyles.radiusSheet       // 20px - bottom sheets
+
+// ===== ICON SIZES =====
+AppStyles.iconSmall         // 14px - buttons/chips
+AppStyles.iconMedium        // 18px - badges
+AppStyles.iconLarge         // 24px - headers
+
+// ===== VERTICAL BAR =====
+AppStyles.barWidth          // 3px
+AppStyles.barHeight         // 44px
+AppStyles.barRadius         // 2px
+
+// ===== RESPONSIVE BREAKPOINTS =====
+AppStyles.breakpointMobile     // 600px
+AppStyles.breakpointTablet     // 900px
+AppStyles.breakpointDesktop    // 1200px
+AppStyles.breakpointLarge      // 1600px
+
+// ===== RESPONSIVE HELPERS =====
+AppStyles.isMobile(context)        // < 600px
+AppStyles.isTablet(context)        // 600-900px
+AppStyles.isDesktop(context)       // 900-1200px
+AppStyles.isLargeDesktop(context)  // > 1200px
+
+// Auto-adaptive values
+AppStyles.getAdaptivePadding(context)  // Returns 16 or 20
+AppStyles.getGridColumns(context)       // Returns 2, 3, or 4
+```
+
+**Example Usage:**
+```dart
+Container(
+  padding: EdgeInsets.all(AppStyles.spacingMedium),
+  decoration: AppStyles.containerDecoration(
+    context,
+    level: ContainerLevel.level1,
+    borderRadius: AppStyles.radiusCard,
+  ),
+  child: Row(
+    children: [
+      Container(
+        width: AppStyles.barWidth,
+        height: AppStyles.barHeight,
+        decoration: BoxDecoration(
+          color: colorScheme.primary,
+          borderRadius: BorderRadius.circular(AppStyles.barRadius),
+        ),
+      ),
+      SizedBox(width: AppStyles.spacingDefault),
+      // ... content
+    ],
+  ),
+)
+```
+
+**Why use AppStyles:**
+- ✅ Change spacing/sizes in one place
+- ✅ Consistent across entire app
+- ✅ Easy to maintain and update
+- ✅ No magic numbers in code
+
+**Colors still use `colorScheme`:**
+```dart
+// Use colorScheme directly for colors
+color: colorScheme.primary
+color: colorScheme.onSurface
+color: colorScheme.surfaceContainer
+// See Container Hierarchy section for surface colors
+```
+
+---
+
+## 📝 Typography
+
+Use theme text styles, never hardcoded sizes:
+
+```dart
+// Display text (32-40px)
+theme.textTheme.displaySmall?.copyWith(
+  fontWeight: FontWeight.w900,
+)
+
+// Section titles (24-28px)
+theme.textTheme.headlineMedium?.copyWith(
+  fontWeight: FontWeight.w800,
+)
+
+// Card titles (16-20px)
+theme.textTheme.titleMedium?.copyWith(
+  fontWeight: FontWeight.w700,
+)
+
+// Body text (14-16px)
+theme.textTheme.bodyMedium?.copyWith(
+  height: 1.4,
+)
+
+// Labels/buttons (12-14px)
+theme.textTheme.labelMedium?.copyWith(
+  fontWeight: FontWeight.w600,
+)
+```
+
+**Font Weights:**
+- `w900` - Display/hero text
+- `w800` - Main titles
+- `w700` - Card titles
+- `w600` - Labels, buttons
+- `w500/w400` - Body text
+
+---
+
+## 🚫 Anti-Patterns (DON'T DO THIS)
+
+### ❌ Creating Custom Cards
+```dart
+// ❌ BAD
+Container(
+  decoration: BoxDecoration(...),
+  child: /* Custom card */,
+)
+
+// ✅ GOOD - Use library widgets
+InfoCard(/* props */)
+IconListCard(/* props */)
+StatCard(/* props */)
+```
+
+### ❌ Using showDialog
+```dart
+// ❌ BAD
+showDialog(...)
+
+// ✅ GOOD
+AppBottomSheet.show(...)
+```
+
+### ❌ Using Material Icons or Legacy SvgIcons
+```dart
+// ❌ BAD - Material Icons
+Icon(Icons.home)
+
+// ❌ BAD - Legacy SvgIcons (deprecated)
+SvgIcons.home(size: 24)
+
+// ✅ GOOD - Font Awesome
+FaIcon(FontAwesomeIcons.house, size: 24, color: colorScheme.primary)
+```
+
+### ❌ Using FABs
+```dart
+// ❌ BAD - FABs are forbidden
+floatingActionButton: FloatingActionButton(...)
+
+// ✅ GOOD - Actions in header
+AppPremiumHeader(
+  actions: [IconButton(...)],
+)
+```
+
+### ❌ Hardcoding Colors
+```dart
+// ❌ BAD
+color: Color(0xFF2196F3)
+color: Colors.blue
+
+// ✅ GOOD
+color: colorScheme.primary
+```
+
+### ❌ Creating Custom Loaders
+```dart
+// ❌ BAD
+CircularProgressIndicator()
+
+// ✅ GOOD
+import 'package:learn/core/widgets/app_loader.dart';
+AppLoader()
+```
+
+---
+
+## 📚 Widget Quick Reference
+
+### "I need to display..."
+
+**...a card:**
+→ `InfoCard`, `IconListCard`, `StatCard` (see `docs/WIDGET_LIBRARY.md`)
+
+**...a modal/sheet:**
+→ `AppBottomSheet` (ALWAYS)
+
+**...a page header:**
+→ `AppPremiumHeader` (ALWAYS)
+
+**...a search bar:**
+→ `AppSearchBar`
+
+**...a loading indicator:**
+→ `AppLoader`
+
+**...an empty state:**
+→ `EmptyState`
+
+**...an error message:**
+→ `AppErrorDisplay`
+
+**...a button:**
+→ `AppButton`, `ActionButton`
+
+**...a list item:**
+→ `IconListCard`, `ListItem`
+
+**See full guide:** `docs/WIDGET_LIBRARY.md`
+
+---
+
+## ✅ Before Creating Any UI - Checklist
+
+- [ ] Read branding rules (`.cursor/rules/branding_rules.mdc`)
+- [ ] Checked widget library (`docs/WIDGET_LIBRARY.md`)
+- [ ] Searched for existing widget that fits the need
+- [ ] Tried adapting existing widget with different props
+- [ ] Using Font Awesome icons (never Material Icons or legacy SvgIcons)
+- [ ] Using `colorScheme` colors (no hardcoded colors)
+- [ ] Using theme text styles (no hardcoded sizes)
+- [ ] Using `AppBottomSheet` for modals (never `showDialog`)
+- [ ] Using `AppPremiumHeader` for headers (never `AppBar`)
+- [ ] Wrapped content in `ResponsiveContainer` for web/desktop support
+- [ ] Tested on different screen sizes (mobile, tablet, desktop)
+- [ ] Confirmed no existing widget can handle this use case
+
+**Only create new widgets if ALL checks pass.**
+
+---
+
+## 🎨 Animation Guidelines
+
+### When to Animate
+
+✅ **DO animate:**
+- Featured cards (flowing borders)
+- Success states (shimmer)
+- New content appearing (fade in)
+- User feedback (tap responses)
+
+❌ **DON'T animate:**
+- Every list item
+- Regular cards
+- Static content
+- Loading states (use progress indicators)
+
+### Standard Animations
+
+```dart
+// Fade in + slide (for new items)
+.animate()
+.fadeIn(duration: 300.ms)
+.slideX(begin: 0.1, end: 0, duration: 300.ms)
+
+// Success shimmer
+.animate(target: isCompleted ? 1 : 0)
+.shimmer(
+  duration: 2.seconds,
+  color: colorScheme.tertiary.withOpacity(0.4),
+)
+```
+
+---
+
+## 📦 Import Patterns
+
+### Common Imports
+
+```dart
+// Widgets (most common)
+import 'package:learn/core/widgets/cards/info_card.dart';
+import 'package:learn/core/widgets/dialogs/app_bottom_sheet.dart';
+import 'package:learn/core/widgets/display/app_premium_header.dart';
+import 'package:learn/core/widgets/inputs/app_search_bar.dart';
+import 'package:learn/core/widgets/app_button.dart';
+import 'package:learn/core/widgets/app_loader.dart';
+import 'package:learn/core/widgets/empty_states/empty_state.dart';
+
+// Styling
+import 'package:learn/core/theme/app_styles.dart';
+
+// Icons
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+// Extensions
+import 'package:learn/core/extensions/context_extension.dart';
+```
+
+**Always use package imports** (`package:learn/...`), never relative imports (`../../`).
+
+---
+
+## 🎯 Implementation Flow
+
+When building a new screen:
+
+1. **Read branding rules** - Get the vocabulary and tone right
+2. **Check widget library** - Find widgets for your needs
+3. **Use AppPremiumHeader** - For the page header
+4. **Use library cards** - For content cards (InfoCard, IconListCard, etc.)
+5. **Use AppSearchBar** - If search is needed
+6. **Use AppBottomSheet** - For any modals/sheets
+7. **Use AppLoader** - For loading states
+8. **Use EmptyState** - For empty states
+9. **Use AppErrorDisplay** - For errors
+10. **Test in light and dark mode** - Ensure it looks good in both
+
+---
+
+## 📚 Related Resources
+
+- **Widget Library:** `docs/WIDGET_LIBRARY.md` ⭐ START HERE
+- **Branding Rules:** `.cursor/rules/branding_rules.mdc`
+- **Font Awesome Icons:** [fontawesome.com/icons](https://fontawesome.com/icons)
+- **Core Widgets:** `lib/core/widgets/`
+- **Theme:** `lib/core/theme/app_theme.dart`
+- **Styles:** `lib/core/theme/app_styles.dart`
+
+---
+
+**Remember:** 
+1. **Always check the widget library first** - `docs/WIDGET_LIBRARY.md`
+2. **Never create custom cards/dialogs/buttons** - use existing widgets
+3. **Follow branding rules** - `.cursor/rules/branding_rules.mdc`
+4. **Consistency is key** - Reusing widgets makes the app feel professional
+
+*Built with ❤️ by SnapSort Team*

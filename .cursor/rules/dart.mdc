@@ -1,0 +1,77 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Specifically prioritize these custom widgets:
+0. **CRITICAL: Always use Font Awesome icons (`font_awesome_flutter`) for all new development.** 
+   - SvgIcons (`lib/core/icons/svg_icons.dart`) is now LEGACY - do not use in new features
+   - Material Icons are FORBIDDEN - never use `Icon(Icons.x)`
+   - Import: `import 'package:font_awesome_flutter/font_awesome_flutter.dart';`
+   - Usage: `FaIcon(FontAwesomeIcons.house, size: 24, color: colorScheme.primary)`
+
+1. AppSnackBar: Use instead of ScaffoldMessenger.of(context).showSnackBar. Always use AppSnackBar.show with context, message, and appropriate SnackBarType (success, error, info, warning). import like so import 'package:learn/core/widgets/app_snackbar.dart';
+
+
+2. AppLoader: Use instead of CircularProgressIndicator for all loading states.
+
+3. Custom Buttons: Check for custom button implementations before using ElevatedButton, OutlinedButton, or TextButton directly.
+
+4. Custom TextFields: Use existing TextField wrapper components when available rather than building new ones.
+
+5. Custom Cards: Favor existing card implementations over creating new ones.
+
+6. Dialog Components: Use existing dialog components rather than AlertDialog directly.
+
+7. Section Widgets: Use existing section widgets (like CourseHeaderSection, MaterialTitleProgressSection, etc.) for layout consistency.
+
+8. Navigation Components: Use custom navigation components (app bars, bottom navs, etc.) when available.
+
+9. avoid using print or debug print statement use search for AppLogger class instead use it as logger.error
+import 'package:learn/core/logger/app_logger.dart';
+
+10. i kind of hate gradent design make it look like a kid stuff, just simple and good looking compoent, must not do all the nonsense box deco with diffrent color gradent or stuff
+
+logger.info('🔄 Main: StudyMaterials created with ID: ${material.id}');
+logger.error(
+        '❌ LocalGenerationDatabase: Failed to save task ${task.id}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+
+always use the singleton
+
+
+Before implementing any generic UI component, search the codebase (especially core/widgets/) for existing implementations that satisfy the requirement.
+
+* **Icons & Emojis**: Use sparingly in the UI; avoid overly casual tones. Emojis can be used in notifications but should be relevant (📚, 🧠, ✅). Always use Font Awesome icons for UI elements.
+
+```dart
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+// Example usage:
+FaIcon(
+  FontAwesomeIcons.bookOpenReader,
+  size: 40,
+  color: theme.colorScheme.primary.withOpacity(0.7),
+)
+```
+
+Font Awesome provides 30,000+ icons - search at [fontawesome.com/icons](https://fontawesome.com/icons)
+
+**LEGACY NOTE:** `SvgIcons` class exists for backward compatibility only. Do not use it in new features. Do not refactor existing code that uses it.
+
+You can use emojis in place of icons if it's more appropriate and best describes what we want
+
+The app follows MVVM architecture with a feature-first approach, so look for similar widgets in the related feature directory first, then fall back to core widgets, and only suggest creating new components when absolutely 
+necessary.
+
+use import 'package:learn/core/utils/auth_utils.dart';
+userid = getUserId(context); to get userid in the widget where context is provided
+
+pls always use package import like so `package:learn/...` and not relative imports like `../../`
+
+For icons, always use: `import 'package:font_awesome_flutter/font_awesome_flutter.dart';`
+
+
+do not edit generated file, the freezed files and also the models in @lib\models

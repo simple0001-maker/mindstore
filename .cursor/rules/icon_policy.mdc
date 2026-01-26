@@ -1,0 +1,247 @@
+---
+description: Icon usage policy for SnapSort app
+alwaysApply: true
+---
+
+# Icon Policy - SnapSort App
+
+**Last Updated:** December 2025  
+**Status:** Active
+
+---
+
+## 🎯 Current Policy: Use Font Awesome
+
+**ALL new features and components must use Font Awesome icons.**
+
+```dart
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+FaIcon(
+  FontAwesomeIcons.house,
+  size: 24,
+  color: colorScheme.primary,
+)
+```
+
+---
+
+## ✅ Why Font Awesome?
+
+1. **Comprehensive**: 30,000+ professional icons
+2. **Consistent**: All icons follow the same design language
+3. **Maintained**: Regularly updated by the Font Awesome team
+4. **Easy to use**: No custom SVG management needed
+5. **Well documented**: Excellent search and documentation at [fontawesome.com/icons](https://fontawesome.com/icons)
+
+---
+
+## 📚 Common Icons for SnapSort
+
+### Navigation
+```dart
+FaIcon(FontAwesomeIcons.house)           // Home
+FaIcon(FontAwesomeIcons.magnifyingGlass) // Search
+FaIcon(FontAwesomeIcons.user)            // Profile
+FaIcon(FontAwesomeIcons.gear)            // Settings
+FaIcon(FontAwesomeIcons.arrowLeft)       // Back
+FaIcon(FontAwesomeIcons.chevronRight)    // Forward/Next
+```
+
+### Academic (SnapSort-specific)
+```dart
+FaIcon(FontAwesomeIcons.book)              // Courses
+FaIcon(FontAwesomeIcons.bookOpenReader)    // Reading/Study
+FaIcon(FontAwesomeIcons.fileLines)         // Materials/Documents
+FaIcon(FontAwesomeIcons.graduationCap)     // Education/Achievement
+FaIcon(FontAwesomeIcons.clipboardQuestion) // Exams/Tests
+FaIcon(FontAwesomeIcons.brain)             // AI/SnapSortAI
+FaIcon(FontAwesomeIcons.lightbulb)         // Ideas/Tips
+FaIcon(FontAwesomeIcons.chartLine)         // Progress/Analytics
+```
+
+### Actions
+```dart
+FaIcon(FontAwesomeIcons.plus)         // Add
+FaIcon(FontAwesomeIcons.pen)          // Edit
+FaIcon(FontAwesomeIcons.trash)        // Delete
+FaIcon(FontAwesomeIcons.check)        // Confirm/Complete
+FaIcon(FontAwesomeIcons.xmark)        // Close/Cancel
+FaIcon(FontAwesomeIcons.ellipsisV)    // More options (vertical)
+FaIcon(FontAwesomeIcons.ellipsis)     // More options (horizontal)
+FaIcon(FontAwesomeIcons.share)        // Share
+FaIcon(FontAwesomeIcons.download)     // Download
+FaIcon(FontAwesomeIcons.upload)       // Upload
+```
+
+### Status & Feedback
+```dart
+FaIcon(FontAwesomeIcons.circleCheck)      // Success
+FaIcon(FontAwesomeIcons.circleXmark)      // Error
+FaIcon(FontAwesomeIcons.circleInfo)       // Info
+FaIcon(FontAwesomeIcons.triangleExclamation) // Warning
+FaIcon(FontAwesomeIcons.spinner)          // Loading (with animation)
+```
+
+---
+
+## 🎨 Icon Styles
+
+Font Awesome provides multiple styles:
+
+### Solid (Default)
+```dart
+FaIcon(FontAwesomeIcons.heart)        // Solid filled heart
+FaIcon(FontAwesomeIcons.solidHeart)   // Explicit solid
+```
+
+### Regular (Outlined)
+```dart
+FaIcon(FontAwesomeIcons.regularHeart) // Outlined heart
+```
+
+### Brands (Social Media & Companies)
+```dart
+FaIcon(FontAwesomeIcons.google)
+FaIcon(FontAwesomeIcons.facebook)
+FaIcon(FontAwesomeIcons.twitter)
+```
+
+**Use solid for primary actions, regular for secondary elements.**
+
+---
+
+## 🔍 Finding Icons
+
+1. Visit [fontawesome.com/icons](https://fontawesome.com/icons)
+2. Search for concept (e.g., "education", "document", "user")
+3. Copy the name and convert to camelCase
+4. Use with `FontAwesomeIcons.camelCaseName`
+
+**Example:**
+- Website shows: "book-open-reader"
+- Dart constant: `FontAwesomeIcons.bookOpenReader`
+
+---
+
+## 🚫 What NOT to Use
+
+### ❌ Material Icons - FORBIDDEN
+```dart
+// NEVER use Material Icons
+Icon(Icons.home)           // ❌ BAD
+Icon(Icons.person)         // ❌ BAD
+Icon(Icons.settings)       // ❌ BAD
+```
+
+### ⚠️ SvgIcons - LEGACY (Deprecated)
+```dart
+// DO NOT use in new features
+SvgIcons.home(size: 24)    // ⚠️ LEGACY - existing code only
+SvgIcons.courses()         // ⚠️ LEGACY - existing code only
+```
+
+**SvgIcons class exists ONLY for backward compatibility.**
+- Do not use in new features
+- Do not refactor existing code that uses it
+- Will remain in codebase indefinitely to avoid breaking changes
+
+---
+
+## 🛠️ Usage Examples
+
+### Basic Icon
+```dart
+FaIcon(
+  FontAwesomeIcons.book,
+  size: 24,
+  color: colorScheme.primary,
+)
+```
+
+### Icon in Button
+```dart
+IconButton(
+  icon: FaIcon(FontAwesomeIcons.gear),
+  onPressed: () {},
+)
+```
+
+### Icon with Text
+```dart
+Row(
+  children: [
+    FaIcon(
+      FontAwesomeIcons.graduationCap,
+      size: 16,
+      color: colorScheme.primary,
+    ),
+    SizedBox(width: 8),
+    Text('My Courses'),
+  ],
+)
+```
+
+### Icon in Badge/Container
+```dart
+Container(
+  width: 40,
+  height: 40,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    color: colorScheme.primary.withOpacity(0.12),
+  ),
+  child: Center(
+    child: FaIcon(
+      FontAwesomeIcons.book,
+      size: 18,
+      color: colorScheme.primary,
+    ),
+  ),
+)
+```
+
+---
+
+## 📋 Migration Notes
+
+**For AI Agents / Developers:**
+
+1. **New features:** Always use Font Awesome - no exceptions
+2. **Existing code:** Leave SvgIcons as-is unless specifically refactoring that component
+3. **Mixed usage:** It's OK for old code to use SvgIcons while new code uses Font Awesome
+4. **Gradual transition:** We're not doing a big bang migration - transition happens naturally as we build new features
+
+**Why not refactor everything?**
+- SvgIcons works fine for existing features
+- Refactoring 1000+ files is risky and time-consuming
+- Better to focus on new development
+- Gradual transition is safer and more maintainable
+
+---
+
+## ✅ Checklist for Icon Usage
+
+Before adding any icon to your code:
+
+- [ ] Did you import `font_awesome_flutter`?
+- [ ] Are you using `FaIcon()` instead of `Icon()`?
+- [ ] Did you avoid using `SvgIcons` (unless maintaining existing code)?
+- [ ] Is the icon appropriate for the context?
+- [ ] Did you set appropriate size and color?
+- [ ] Have you checked [fontawesome.com/icons](https://fontawesome.com/icons) for the best icon choice?
+
+---
+
+## 🔗 Resources
+
+- **Font Awesome Icons:** [fontawesome.com/icons](https://fontawesome.com/icons)
+- **Font Awesome Flutter Package:** [pub.dev/packages/font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter)
+- **Design System:** `.cursor/rules/design_system.mdc`
+- **Branding Rules:** `.cursor/rules/branding_rules.mdc`
+
+---
+
+**Remember: Font Awesome for all new development. SvgIcons is legacy only.**
+
+*Built with ❤️ by SnapSort Team*

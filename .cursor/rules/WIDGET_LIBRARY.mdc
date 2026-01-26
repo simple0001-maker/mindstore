@@ -1,0 +1,906 @@
+# 🎨 Learn Component Library Documentation
+
+**🚨 CRITICAL: USE EXISTING WIDGETS ONLY**
+
+**Before creating ANY new widget, container, card, or UI component:**
+1. **Search this library first** - 90% of what you need already exists
+2. **Adapt existing widgets** - Customize props instead of building from scratch
+3. **Only create new widgets** if absolutely no existing component can be adapted
+4. **Keep the app consistent** - Reusing widgets ensures visual consistency
+
+**Goal:** Every screen should look like it belongs to the same app. Use the same cards, buttons, dialogs, and patterns everywhere.
+
+---
+
+## 📁 Widget Organization
+
+All widgets are organized in `/lib/core/widgets/` by category:
+
+```
+lib/core/widgets/
+  ├── actions/          → Action buttons
+  ├── animations/       → Animated components
+  ├── borders/          → Border styles
+  ├── buttons/          → Button components
+  ├── cards/            → Card components (MOST USED)
+  ├── dialogs/          → Bottom sheets, modals, dialogs
+  ├── display/          → Headers, banners, text displays
+  ├── domain_specific/  → Feature-specific widgets
+  ├── empty_states/     → Empty state components
+  ├── inputs/           → Search bars, dropdowns, filters
+  ├── layout/           → Layout helpers
+  ├── list/             → List items and sections
+  ├── loading/          → Loading indicators
+  ├── navigation/       → Navigation components
+  ├── project_specific/ → App-level widgets
+  └── user_tour/        → User tour system
+```
+
+---
+
+## 🎴 Cards (Most Commonly Used)
+
+**Location:** `lib/core/widgets/cards/`
+
+### 1. `InfoCard` ⭐ PRIMARY CARD
+**Use for:** Category listings, action cards, feature highlights, most content cards
+
+```dart
+import 'package:learn/core/widgets/cards/info_card.dart';
+
+InfoCard(
+  title: 'Past Questions',
+  subtitle: 'Access 1000+ past exam papers',
+  leading: Container(/* Icon badge */),
+  trailing: SvgIcons.chevronRight(size: 16),
+  backgroundImage: 'https://...',  // Optional
+  showBar: true,  // Vertical accent bar
+  isPageSection: true, // Auto-wraps in PageSection (horizontal padding)
+  onTap: () => Navigator.push(...),
+)
+```
+
+**Features:**
+- Vertical accent bar (branding)
+- Background image support (faded right)
+- Leading icon badge
+- Trailing action chevron
+- **Adaptive Padding:** Use `isPageSection: true` (default) for standalone sections. Set to `false` when placing inside a `Column` or `ListView` that already has horizontal padding.
+- Auto light/dark mode
+
+### 2. `IconListCard`
+**Use for:** List items with icons, study materials, courses
+
+```dart
+import 'package:learn/core/widgets/cards/icon_list_card.dart';
+
+IconListCard(
+  title: 'Linear Algebra',
+  subtitle: 'MTH 201 • 45 pages',
+  icon: SvgIcons.document(size: 16),
+  iconColor: colorScheme.primary,
+  trailing: IconButton(icon: SvgIcons.more()),
+  onTap: () {},
+)
+```
+
+### 3. `StatCard`
+**Use for:** Dashboard statistics, metrics
+
+```dart
+import 'package:learn/core/widgets/cards/stat_card.dart';
+
+StatCard(
+  label: 'Study Time',
+  value: '24h',
+  icon: SvgIcons.clock(size: 20),
+  accentColor: colorScheme.tertiary,
+)
+```
+
+### 4. `PreviewCard`
+**Use for:** Material previews, course previews, image-heavy content
+
+```dart
+import 'package:learn/core/widgets/cards/preview_card.dart';
+
+PreviewCard(
+  imageUrl: pdfThumbnail,
+  title: 'Calculus Notes',
+  subtitle: 'Chapter 3',
+  badge: Container(/* Status badge */),
+  width: 160,
+  onTap: () {},
+)
+```
+
+### 5. `ActionGridCard`
+**Use for:** Grid actions, quick action buttons
+
+```dart
+import 'package:learn/core/widgets/cards/action_grid_card.dart';
+
+ActionGridCard(
+  icon: SvgIcons.add(size: 20),
+  title: 'Create Exam',
+  subtitle: 'From your materials',
+  onTap: () {},
+)
+```
+
+### 6. `TipsCard`
+**Use for:** Tips, hints, information callouts
+
+```dart
+import 'package:learn/core/widgets/cards/tips_card.dart';
+
+TipsCard(
+  title: 'Pro Tip',
+  subtitle: 'Study in 25-minute focused sessions',
+  icon: SvgIcons.lightbulb(size: 18),
+  buttonLabel: 'Learn More',
+  onButtonTap: () {},
+)
+```
+
+### 7. `IconInfoCard`
+**Use for:** Rich information displays with formatted text
+
+```dart
+import 'package:learn/core/widgets/cards/icon_info_card.dart';
+
+IconInfoCard(
+  icon: SvgIcons.info(size: 16),
+  title: 'Important Note',
+  description: Text.rich(TextSpan(/* Rich text */)),
+)
+```
+
+### 8. `ProgressToolCard`
+**Use for:** Progress tracking, analytics cards
+
+```dart
+import 'package:learn/core/widgets/cards/progress_tool_card.dart';
+
+ProgressToolCard(
+  title: 'Study Progress',
+  subtitle: '75% completed',
+  icon: SvgIcons.chart(size: 24),
+  backgroundImage: 'assets/...',
+  onTap: () {},
+)
+```
+
+### 9. `AppCard` (Advanced)
+**Use for:** Custom complex cards with multiple types
+
+```dart
+import 'package:learn/core/widgets/cards/app_card.dart';
+
+AppCard.basic(
+  content: Column(/* Custom content */),
+  onTap: () {},
+)
+```
+
+**Available types:** basic, header, selection, section, status, summary
+
+---
+
+## 💬 Dialogs & Modals
+
+**Location:** `lib/core/widgets/dialogs/`
+
+### 1. `AppBottomSheet` ⭐ ALWAYS USE THIS
+**NEVER use `showDialog` or raw `showModalBottomSheet`**
+
+```dart
+import 'package:learn/core/widgets/dialogs/app_bottom_sheet.dart';
+
+AppBottomSheet.show(
+  context: context,
+  title: 'Options',
+  titleIcon: Icons.settings,
+  content: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      AppBottomSheetListItem(
+        leading: SvgIcons.edit(size: 20),
+        title: 'Edit',
+        subtitle: 'Modify this item',
+        onTap: () {},
+      ),
+      AppBottomSheetDivider(),
+      AppBottomSheetListItem(
+        leading: SvgIcons.delete(size: 20),
+        title: 'Delete',
+        onTap: () {},
+      ),
+    ],
+  ),
+);
+```
+
+### 2. `AppDeleteConfirmationSheet`
+**Use for:** Delete confirmations
+
+```dart
+import 'package:learn/core/widgets/dialogs/app_delete_confirmation_sheet.dart';
+
+AppDeleteConfirmationSheet.show(
+  context,
+  title: 'Delete Course',
+  message: 'This cannot be undone',
+  onConfirm: () => _handleDelete(),
+  isLoading: state.isDeleting,
+)
+```
+
+### 3. `AppDialog`
+**Use for:** Important confirmations, warnings
+
+```dart
+import 'package:learn/core/widgets/dialogs/app_dialog.dart';
+
+AppDialog.show(
+  context: context,
+  title: 'Confirm Action',
+  content: Text('Are you sure?'),
+  primaryButtonText: 'Confirm',
+  onPrimaryPressed: () {},
+)
+```
+
+### 4. `AppConfirmationDialog`
+**Use for:** Simple yes/no confirmations
+
+```dart
+import 'package:learn/core/widgets/dialogs/app_confirmation_dialog.dart';
+
+AppConfirmationDialog.show(
+  context: context,
+  title: 'Confirm',
+  message: 'Continue with this action?',
+  confirmText: 'Yes',
+  onConfirm: () {},
+)
+```
+
+---
+
+## 🎨 Display Components
+
+**Location:** `lib/core/widgets/display/`
+
+### 1. `AppPremiumHeader` ⭐ USE FOR ALL PAGE HEADERS
+**Replace AppBar with this**
+
+```dart
+import 'package:learn/core/widgets/display/app_premium_header.dart';
+```
+
+---
+
+#### ✅ **Recommended: Structured Parameters** (Use this 95% of the time)
+
+Creates a beautiful cascading text header with consistent styling:
+
+```dart
+// In CustomScrollView:
+slivers: [
+  AppPremiumHeader(
+    title: 'Page Title', // Required for accessibility
+    headerImageUrl: AppHeaders.courses,
+    showBackButton: true,
+    onBack: () => Navigator.pop(context),
+    // Structured content - automatically styled!
+    contextIcon: SvgIcons.courses(size: 16, color: colorScheme.primary),
+    contextLabel: 'Course Management',
+    achievementTitlePrimary: 'Add a New',  // Large, bold text
+    achievementTitleSecondary: 'Course',   // Slightly smaller, lighter
+    detailedSubtitle: 'Organize your studies by setting up a new academic course.',
+    // Optional: bottom widget (search bar, buttons, etc.)
+    bottomChild: AppSearchBar(onSearch: _search),
+  ),
+  // Rest of content...
+]
+```
+
+**Automatically creates this visual hierarchy:**
+1. **Context Label** (icon + small text) - "What this page is"
+2. **Cascading Title** (large → medium text) - "What user wants to achieve"
+3. **Subtitle** (body text) - "How they'll achieve it"
+
+---
+
+#### 🔧 **Advanced: Custom Content** (For unique layouts only)
+
+If you need complete control (rare), use the `content` property:
+
+```dart
+AppPremiumHeader(
+  title: 'Exam Hub',
+  headerImageUrl: headerImage,
+  onBack: () => Navigator.pop(context),
+  content: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Your completely custom layout
+      // Only use when structured parameters don't fit
+    ],
+  ),
+)
+```
+
+---
+
+#### 📐 **Legacy: Title/Description** (Still supported)
+
+Old API for backward compatibility:
+
+```dart
+AppPremiumHeader(
+  title: 'Exam Hub',
+  description: 'Find any exam',
+  logoUrl: categoryLogo,
+  headerImageUrl: headerImage,
+  badgeIcon: Icons.library_books,
+  badgeText: '500+ Exams',
+  onBack: () => Navigator.pop(context),
+)
+```
+
+---
+
+**Features:**
+- Premium header with image background
+- Three layout modes: structured (recommended), custom (`content`), or legacy
+- Automatic cascading text styling
+- Logo display (circular)
+- Badge support
+- Search bar at bottom
+- Parallax scroll effect
+- Works as SliverAppBar
+
+### 2. `OfflineBanner`
+**Use for:** Network status indication
+
+```dart
+import 'package:learn/core/widgets/display/offline_banner.dart';
+
+OfflineBanner() // Auto-shows when offline
+```
+
+### 3. `AppSnackBar` ⭐ TOAST NOTIFICATION
+**Use for:** Temporary success/error/info messages. iOS-style top notification.
+
+```dart
+import 'package:learn/core/widgets/display/app_snackbar.dart';
+
+// Basic usage
+AppSnackBar.showSuccess(
+  context: context,
+  message: 'Course saved successfully',
+);
+
+AppSnackBar.showError(
+  context: context,
+  message: 'Failed to save changes',
+);
+
+// Custom icon
+AppSnackBar.showInfo(
+  context: context,
+  message: 'New exam available',
+  icon: SvgIcons.exam,
+);
+
+// Full control
+AppSnackBar.show(
+  context: context,
+  message: 'Custom message',
+  type: SnackBarType.warning,
+  icon: SvgIcons.warning,
+  onDismissed: () => print('Dismissed'),
+);
+```
+
+### 4. `StickyProgressHeader`
+**Use for:** Progress tracking headers
+
+```dart
+import 'package:learn/core/widgets/display/sticky_progress_header.dart';
+
+StickyProgressHeader(
+  title: 'Exam Progress',
+  progress: 0.75,
+)
+```
+
+---
+
+## 🎯 Inputs
+
+**Location:** `lib/core/widgets/inputs/`
+
+### 1. `AppSearchBar` ⭐ STANDARD SEARCH
+```dart
+import 'package:learn/core/widgets/inputs/app_search_bar.dart';
+
+AppSearchBar(
+  onSearch: (query) => _performSearch(query),
+  hintText: 'Search exams...',
+  autofocus: false,
+)
+```
+
+### 2. `AppDropdown`
+```dart
+import 'package:learn/core/widgets/inputs/app_dropdown.dart';
+
+AppDropdown<String>(
+  value: selectedValue,
+  items: ['Option 1', 'Option 2'],
+  onChanged: (value) => setState(() => selectedValue = value),
+)
+```
+
+### 3. `AppFilterChip`
+```dart
+import 'package:learn/core/widgets/inputs/app_filter_chip.dart';
+
+AppFilterChip(
+  label: 'Past Questions',
+  isSelected: _selectedFilter == 'past',
+  onTap: () => setState(() => _selectedFilter = 'past'),
+)
+```
+
+---
+
+## ⚡ Buttons
+
+**Location:** `lib/core/widgets/buttons/`, `lib/core/widgets/actions/`
+
+### 1. `AppButton` (Root Level) ⭐ PRIMARY BUTTON
+```dart
+import 'package:learn/core/widgets/app_button.dart';
+
+AppButton.gradient(
+  text: 'Start Exam',
+  onPressed: () {},
+)
+
+AppButton.outlined(
+  text: 'Cancel',
+  onPressed: () {},
+)
+
+AppButton.danger(
+  text: 'Delete',
+  onPressed: () {},
+)
+```
+
+### 2. `ActionButton`
+```dart
+import 'package:learn/core/widgets/actions/action_button.dart';
+
+ActionButton(
+  label: 'Save',
+  icon: SvgIcons.save(size: 18),
+  isLoading: state.isSaving,
+  onPressed: () {},
+)
+```
+
+### 3. `IconActionButton`
+```dart
+import 'package:learn/core/widgets/actions/icon_action_button.dart';
+
+IconActionButton(
+  icon: SvgIcons.more(size: 20),
+  onPressed: () {},
+)
+```
+
+---
+
+## 🔄 Loading States
+
+**Location:** `lib/core/widgets/loading/`, root level
+
+### 1. `AppLoader` ⭐ (Root Level)
+```dart
+import 'package:learn/core/widgets/app_loader.dart';
+
+// Default
+AppLoader()
+
+// Small (in buttons)
+AppLoader.small()
+
+// With message
+AppLoader(message: 'Loading...')
+
+// Full screen overlay
+AppLoader.fullScreenOverlay(context)
+```
+
+### 2. `CreationLoadingView`
+**Use for:** Long-running creation tasks
+
+```dart
+import 'package:learn/core/widgets/loading/creation_loading_view.dart';
+
+CreationLoadingView(
+  title: 'Creating Exam',
+  description: 'LearnAI is setting up your exam...',
+)
+```
+
+---
+
+## 🌫️ Empty States
+
+**Location:** `lib/core/widgets/empty_states/`
+
+### 1. `EmptyState` ⭐
+```dart
+import 'package:learn/core/widgets/empty_states/empty_state.dart';
+
+EmptyState.withIconData(
+  iconData: Icons.inbox_outlined,
+  title: 'No Materials Yet',
+  message: 'Start by adding your first study material',
+  actionLabel: 'Add Material',
+  onAction: () {},
+  showInCard: true,
+)
+```
+
+---
+
+## ⚠️ Error Display
+
+**Location:** `lib/core/widgets/` (root level)
+
+### 1. `AppErrorDisplay` ⭐
+```dart
+import 'package:learn/core/widgets/app_error_display.dart';
+
+// Inline error
+AppErrorDisplay(
+  message: 'Failed to load data',
+  onRetry: () => _retry(),
+)
+
+// Full page error
+AppErrorDisplay(
+  type: ErrorDisplayType.fullPage,
+  message: 'Something went wrong',
+  onRetry: () => _retry(),
+)
+
+// Card-style error
+AppErrorDisplay(
+  type: ErrorDisplayType.card,
+  message: 'Network error',
+  onRetry: () => _retry(),
+)
+```
+
+---
+
+## 🏗️ Layout Components
+
+**Location:** `lib/core/widgets/layout/`
+
+### 1. `PageSection`
+**Use for:** Consistent horizontal padding
+
+```dart
+import 'package:learn/core/widgets/layout/page_section.dart';
+
+PageSection(
+  child: Column(/* Your content */),
+)
+```
+
+### 2. `SectionHeader`
+**Use for:** Section titles with actions
+
+```dart
+import 'package:learn/core/widgets/layout/section_header.dart';
+
+SectionHeader(
+  title: 'Recent Materials',
+  subtitle: 'Last 7 days',
+  trailing: TextButton(
+    child: Text('See All'),
+    onPressed: () {},
+  ),
+)
+```
+
+### 3. `ResponsiveContainer`
+**Use for:** Web/desktop width constraints
+
+```dart
+import 'package:learn/core/widgets/layout/responsive_container.dart';
+
+ResponsiveContainer(
+  maxWidth: 1200,
+  child: /* Content */,
+)
+```
+
+### 4. `ResponsiveScaffold` (Root Level)
+**Use for:** Responsive page layouts
+
+```dart
+import 'package:learn/core/widgets/responsive_scaffold.dart';
+
+ResponsiveScaffold(
+  body: /* Your content */,
+)
+```
+
+---
+
+## 📜 List Components
+
+**Location:** `lib/core/widgets/list/`
+
+### 1. `ListItem`
+**Use for:** Consistent list items
+
+```dart
+import 'package:learn/core/widgets/list/list_item.dart';
+
+ListItem(
+  leading: Container(/* Vertical bar or badge */),
+  title: 'Item Title',
+  subtitle: 'Description',
+  trailing: SvgIcons.chevronRight(),
+  onTap: () {},
+)
+```
+
+### 2. `ListSection`
+**Use for:** Grouped lists with headers
+
+```dart
+import 'package:learn/core/widgets/list/list_section.dart';
+
+ListSection(
+  title: 'Recent Activity',
+  items: [
+    ListItem(...),
+    ListItem(...),
+  ],
+  onSeeAll: () {},
+)
+```
+
+---
+
+## 🧭 Navigation
+
+**Location:** `lib/core/widgets/navigation/`
+
+### 1. `AppBottomNav`
+**Use for:** Bottom navigation bar
+
+```dart
+import 'package:learn/core/widgets/navigation/app_bottom_nav.dart';
+
+AppBottomNav(
+  currentIndex: _currentIndex,
+  onTap: (index) => setState(() => _currentIndex = index),
+)
+```
+
+### 2. `PageTransitions`
+**Use for:** Custom page transitions
+
+```dart
+import 'package:learn/core/widgets/navigation/page_transitions.dart';
+
+Navigator.push(
+  context,
+  PageTransitions.slideUp(builder: (context) => NextPage()),
+)
+```
+
+---
+
+## 🎯 Container Styling System
+
+**Location:** `lib/core/theme/app_styles.dart`
+
+**ALWAYS use this for container styling:**
+
+```dart
+import 'package:learn/core/theme/app_styles.dart';
+
+Container(
+  decoration: AppStyles.containerDecoration(
+    context,
+    level: ContainerLevel.level1,
+    borderRadius: 12,
+  ),
+  child: /* Content */,
+)
+```
+
+**Hierarchy:**
+- **Level 0** (`surfaceContainerLow`): Main scaffold background
+- **Level 1** (`surfaceContainer`): Primary cards
+- **Level 2** (`surfaceContainerHigh`): Nested elements
+- **Level 3** (`surfaceContainerHighest`): Deep nested elements
+
+---
+
+## 🚨 Common Mistakes to Avoid
+
+### ❌ DON'T Create Custom Cards
+```dart
+// ❌ BAD
+Container(
+  decoration: BoxDecoration(/* Custom styling */),
+  child: /* Custom card content */,
+)
+```
+
+### ✅ DO Use Existing Cards
+```dart
+// ✅ GOOD
+InfoCard(
+  title: 'Title',
+  subtitle: 'Description',
+  onTap: () {},
+)
+```
+
+### ❌ DON'T Use showDialog
+```dart
+// ❌ BAD
+showDialog(
+  context: context,
+  builder: (context) => AlertDialog(...),
+)
+```
+
+### ✅ DO Use AppBottomSheet
+```dart
+// ✅ GOOD
+AppBottomSheet.show(
+  context: context,
+  title: 'Title',
+  content: /* Content */,
+)
+```
+
+### ❌ DON'T Create Custom Loaders
+```dart
+// ❌ BAD
+Center(child: CircularProgressIndicator())
+```
+
+### ✅ DO Use AppLoader
+```dart
+// ✅ GOOD
+AppLoader()
+```
+
+---
+
+## 📚 Widget Selection Guide
+
+### "I need to display..."
+
+**...a clickable card with title & description:**
+→ `InfoCard` or `IconListCard`
+
+**...a grid of action buttons:**
+→ `ActionGridCard`
+
+**...statistics/metrics:**
+→ `StatCard`
+
+**...a list item:**
+→ `IconListCard` or `ListItem`
+
+**...a modal/sheet:**
+→ `AppBottomSheet` (ALWAYS)
+
+**...a page header:**
+→ `AppPremiumHeader` (ALWAYS)
+
+**...a search bar:**
+→ `AppSearchBar`
+
+**...a loading indicator:**
+→ `AppLoader`
+
+**...an empty state:**
+→ `EmptyState`
+
+**...an error message:**
+→ `AppErrorDisplay`
+
+**...a button:**
+→ `AppButton` or `ActionButton`
+
+**...a filter/chip:**
+→ `AppFilterChip`
+
+---
+
+## 🎯 Quick Import Reference
+
+```dart
+// Cards (most common)
+import 'package:learn/core/widgets/cards/info_card.dart';
+import 'package:learn/core/widgets/cards/icon_list_card.dart';
+import 'package:learn/core/widgets/cards/stat_card.dart';
+
+// Dialogs
+import 'package:learn/core/widgets/dialogs/app_bottom_sheet.dart';
+import 'package:learn/core/widgets/dialogs/app_delete_confirmation_sheet.dart';
+
+// Display
+import 'package:learn/core/widgets/display/app_premium_header.dart';
+
+// Inputs
+import 'package:learn/core/widgets/inputs/app_search_bar.dart';
+
+// Core (root level)
+import 'package:learn/core/widgets/app_button.dart';
+import 'package:learn/core/widgets/app_loader.dart';
+import 'package:learn/core/widgets/app_error_display.dart';
+import 'package:learn/core/widgets/app_snackbar.dart';
+
+// Empty states
+import 'package:learn/core/widgets/empty_states/empty_state.dart';
+
+// Layout
+import 'package:learn/core/widgets/layout/page_section.dart';
+import 'package:learn/core/widgets/layout/section_header.dart';
+
+// Styling
+import 'package:learn/core/theme/app_styles.dart';
+```
+
+---
+
+## ✅ Before Creating a New Widget - Checklist
+
+- [ ] Searched this document for similar component
+- [ ] Checked `/cards/` directory
+- [ ] Checked `/dialogs/` directory
+- [ ] Checked `/inputs/` directory
+- [ ] Checked root level widgets
+- [ ] Tried adapting existing widget with different props
+- [ ] Confirmed no existing widget can handle this use case
+- [ ] New widget follows branding guidelines (`.cursor/rules/branding_rules.mdc`)
+- [ ] New widget follows design system (`.cursor/rules/design_system.mdc`)
+
+**Only proceed with new widget if ALL checks pass.**
+
+---
+
+## 🎨 Design Consistency
+
+All widgets automatically follow:
+- ✅ Material 3 color scheme
+- ✅ Light/dark mode support
+- ✅ Consistent spacing (4/8/12/16px)
+- ✅ Standard border radius (12px cards)
+- ✅ Unified typography
+- ✅ SvgIcons system (never Material Icons directly)
+
+---
+
+**Remember:** Using existing widgets makes the app feel cohesive and professional. Every time you reuse a widget instead of creating a new one, you're improving consistency and maintainability.

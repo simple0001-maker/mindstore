@@ -1,0 +1,1596 @@
+---
+description: when starting a new features, this are the rules and achetecture
+globs: 
+alwaysApply: false
+---
+# Feature Implementation Guide
+
+This guide explains how to implement a new feature from scratch using our established clean architecture framework, based on the courses feature implementation.
+
+before for we implement any feature we would first check if  we need to write migration from the feature plan, if we need any migration we would add too in  supabase\migrations
+
+we are naming the migrations sequentially (001, 002, 003... nnn). Always check the existing migrations folder to see the latest number and add your new migration to the end of the sequence. For example, if the latest migration is 016_add_delete_policies.sql, then your new migration should be 017_your_migration_name.sql. NEVER edit any existing migration file except if explicitly asked to, only add new ones. Make sure you read all the other relevant migration files to see how we did it and always write RLS policies and make sure you grant access to authenticated users. pls avoid using dart keywords in enums ot any database stuff
+
+After creating i will personally run run the migration files in the Supabase dashboard, the models will be automatically generated. If your migration creates any new database enums, you must add them to the enums section in supadart.yaml before running the generation. Then run `supadart` in the terminal to generate the Dart models from the database schema. This will create/update the model files in the lib/models/ directory based on your new database tables.
+
+## 🚨 CRITICAL: Model Generation Rules
+
+### **Agent Restrictions on Model Creation**
+- **ONLY the human can run migrations and generate Dart models**
+- **Agents MUST NOT create model files or use generic classes**
+- **Agents should code as if models exist, ignoring lint errors**
+- **When the human generates models, everything will fall into place**
+
+### **Implementation Pattern**
+When implementing a feature that requires new database models:
+1. **Agent writes the migration file** (SQL schema)
+2. **Agent writes all code** (repositories, blocs, views) **as if models exist**
+3. **Agent ignores lint errors** caused by missing models
+4. **Human runs migration** in Supabase dashboard
+5. **Human runs `supadart`** to generate models
+6. **All lint errors resolve automatically** once models are generated
+
+**Example:**
+```dart
+// ✅ CORRECT: Agent writes code using model as if it exists
+import 'package:learn/models/space_assignments.dart'; // Model doesn't exist yet - that's OK
+
+class AssignmentRepository {
+  Future<Either<Failure, List<SpaceAssignments>>> getAssignments() async {
+    // Code as if SpaceAssignments model exists
+    // Lint errors are expected and will resolve after model generation
+  }
+}
+```
+
+```dart
+// ❌ WRONG: Agent should NOT create model files
+// Don't create lib/models/space_assignments.dart manually
+// Don't use generic Map<String, dynamic> as a workaround
+``` 
+
+
+## 🏗️ Architecture Overview
+
+Our features follow **Clean Architecture with MVVM pattern**:
+
+```
+lib/features/[feature_name]/
+├── di/                     # Dependency Injection
+├── data/                   # Data Layer (Repository Implementation)
+├── domain/                 # Domain Layer (Repository Interface)
+├── presentation/           # Presentation Layer (UI)
+│   ├── bloc/              # Main Feature State Management (Bloc + Equatable)
+│   │   ├── [feature_name]_bloc.dart
+│   │   ├── [feature_name]_event.dart
+│   │   └── [feature_name]_state.dart
+│   ├── cubit/             # Additional State Management (Sync, etc.)
+│   │   ├── [feature_name]_sync_cubit.dart
+│   │   └── [feature_name]_sync_state.dart
+│   ├── views/             # Screens/Pages
+│   │   ├── [feature_name]_list_view.dart
+│   │   ├── [feature_name]_detail_view.dart
+│   │   ├── add_[feature_name]_view.dart
+│   │   └── [feature_name]_sync_panel.dart
+│   └── widgets/           # Reusable UI Components
+│       ├── [feature_name]_card.dart
+│       └── [feature_name]_form.dart
+├── services/              # Business Logic Services
+│   ├── local_[feature_name]_service.dart    # Hive storage
+│   ├── [feature_name]_sync_service.dart     # Cloud operations
+│   └── ai_[feature_name]_service.dart       # AI integration (if applicable)
+└── utils/                 # Feature-specific utilities
+    └── [feature_name]_utils.dart
+```
+
+### **SnapSort Spaces Feature Organization (Special Case)**
+
+For features within the **SnapSort Spaces** feature (`lib/features/learn_space/`), each sub-feature gets its own folder structure to maintain separation:
+
+```
+lib/features/learn_space/
+├── presentation/
+│   ├── bloc/
+│   │   ├── announcement/          # Each feature gets its own folder
+│   │   │   ├── announcement_bloc.dart
+│   │   │   ├── announcement_event.dart
+│   │   │   └── announcement_state.dart
+│   │   ├── assignment/            # Separate folder for assignments
+│   │   │   ├── assignment_bloc.dart
+│   │   │   ├── assignment_event.dart
+│   │   │   └── assignment_state.dart
+│   │   └── category/              # Separate folder for categories
+│   │       ├── category_bloc.dart
+│   │       ├── category_event.dart
+│   │       └── category_state.dart
+│   ├── views/
+│   │   ├── annoucement/           # Each feature gets its own folder
+│   │   │   ├── space_announcements_view.dart
+│   │   │   └── create_edit_announcement_view.dart
+│   │   ├── assignments/           # Separate folder for assignments
+│   │   │   ├── space_assignments_view.dart
+│   │   │   ├── create_edit_assignment_view.dart
+│   │   │   └── assignment_detail_view.dart
+│   │   └── categories/            # Separate folder for categories
+│   │       └── manage_categories_view.dart
+│   └── widgets/
+│       ├── annoucement/            # Each feature gets its own folder
+│       │   ├── announcement_card.dart
+│       │   └── announcement_form.dart
+│       ├── assignments/           # Separate folder for assignments
+│       │   ├── assignment_card.dart
+│       │   ├── assignment_countdown_timer.dart
+│       │   └── assignment_attachments_list.dart
+│       └── categories/            # Separate folder for categories
+│           └── category_section.dart
+```
+
+**Key Principles:**
+- ✅ **Each sub-feature maintains its own folder** in `bloc/`, `views/`, and `widgets/`
+- ✅ **Keeps features separate** even within the same parent feature
+- ✅ **Improves maintainability** and makes it easier to find related files
+- ✅ **Prevents file clutter** in shared directories
+- ✅ **Follows feature-first organization** at the sub-feature level
+
+## 🚀 Step-by-Step Implementation
+
+### 1. Create Feature Structure
+
+Create the following directory structure:
+
+#### **For Simple Features (Single Bloc/Cubit):**
+```bash
+lib/features/[feature_name]/
+├── di/
+│   └── [feature_name]_module.dart
+├── data/
+│   └── [feature_name]_repository.dart
+├── domain/
+│   └── i_[feature_name]_repository.dart
+├── presentation/
+│   ├── bloc/                    # Main feature state management
+│   │   ├── [feature_name]_bloc.dart
+│   │   ├── [feature_name]_event.dart
+│   │   └── [feature_name]_state.dart
+│   ├── cubit/                   # Additional state management (sync, etc.)
+│   │   ├── [feature_name]_sync_cubit.dart
+│   │   └── [feature_name]_sync_state.dart
+│   ├── views/
+│   │   ├── [feature_name]_list_view.dart
+│   │   ├── [feature_name]_detail_view.dart
+│   │   ├── add_[feature_name]_view.dart
+│   │   └── [feature_name]_sync_panel.dart
+│   └── widgets/
+│       ├── [feature_name]_card.dart
+│       └── [feature_name]_form.dart
+├── services/
+│   ├── local_[feature_name]_service.dart
+│   ├── [feature_name]_sync_service.dart
+│   └── ai_[feature_name]_service.dart    # If AI features
+└── utils/
+    └── [feature_name]_utils.dart
+```
+
+#### **For Complex Features (Multiple Blocs/Cubits):**
+```bash
+lib/features/[feature_name]/
+├── presentation/
+│   ├── bloc/
+│   │   ├── [main_feature]/      # Each bloc gets its own folder
+│   │   │   ├── [main_feature]_bloc.dart
+│   │   │   ├── [main_feature]_event.dart
+│   │   │   └── [main_feature]_state.dart
+│   │   └── [sub_feature]/       # Additional blocs
+│   │       ├── [sub_feature]_bloc.dart
+│   │       ├── [sub_feature]_event.dart
+│   │       └── [sub_feature]_state.dart
+│   └── cubit/
+│       ├── [sync_feature]/      # Each cubit gets its own folder
+│       │   ├── [sync_feature]_cubit.dart
+│       │   └── [sync_feature]_state.dart
+│       └── [other_feature]/
+│           ├── [other_feature]_cubit.dart
+│           └── [other_feature]_state.dart
+```
+
+### 2. Domain Layer (Interface)
+
+Create `lib/features/[feature_name]/domain/i_[feature_name]_repository.dart`:
+
+```dart
+import 'package:fpdart/fpdart.dart';
+import 'package:learn/core/errors/failures.dart';
+import 'package:learn/models/[model_name].dart';
+
+abstract class I[FeatureName]Repository {
+  // CRUD Operations using Either pattern
+  Future<Either<Failure, List<[ModelName]>>> get[FeatureName]s({
+    required String userId,
+  });
+  
+  Future<Either<Failure, [ModelName]?>> get[FeatureName]ById({
+    required String id,
+  });
+  
+  Future<Either<Failure, [ModelName]>> create[FeatureName]({
+    required [ModelName] [featureName],
+  });
+  
+  Future<Either<Failure, [ModelName]>> update[FeatureName]({
+    required [ModelName] [featureName],
+  });
+  
+  Future<Either<Failure, Unit>> delete[FeatureName]({
+    required String userId,
+    required String id,
+  });
+}
+```
+
+### 3. Data Layer (Repository Implementation)
+
+Create `lib/features/[feature_name]/data/[feature_name]_repository.dart`:
+
+```dart
+import 'package:fpdart/fpdart.dart';
+import 'package:learn/core/errors/exceptions.dart';
+import 'package:learn/core/errors/failures.dart';
+import 'package:learn/core/utils/connectivity_util.dart';
+import 'package:learn/features/[feature_name]/domain/i_[feature_name]_repository.dart';
+import 'package:learn/models/[model_name].dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:learn/models/supadart_header.dart';
+import 'package:learn/core/logger/app_logger.dart';
+
+class [FeatureName]Repository implements I[FeatureName]Repository {
+  final SupabaseClient _supabase;
+  final ConnectivityUtil _connectivityUtil;
+
+  [FeatureName]Repository({
+    required SupabaseClient supabase,
+    ConnectivityUtil? connectivityUtil,
+  }) : _supabase = supabase,
+       _connectivityUtil = connectivityUtil ?? ConnectivityUtil.instance;
+
+  @override
+  Future<Either<Failure, List<[ModelName]>>> get[FeatureName]s({
+    required String userId,
+  }) async {
+    try {
+      // Check network connectivity
+      final isConnected = await _connectivityUtil.isConnected();
+      if (!isConnected) {
+        return Left(NetworkFailure());
+      }
+
+      logger.info('Fetching [feature_name]s for user: $userId');
+
+      final [featureName]s = await _supabase.[table_name]
+          .select('*')
+          .eq([ModelName].c_userId, userId)
+          .withConverter([ModelName].converter);
+
+      logger.debug('Successfully fetched ${[featureName]s.length} [feature_name]s');
+      return Right([featureName]s);
+    } on PostgrestException catch (error) {
+      logger.error('Supabase error fetching [feature_name]s', error: error);
+      return Left(ServerFailure('Failed to fetch [feature_name]s: ${error.message}'));
+    } on ServerException catch (error) {
+      logger.error('Server error fetching [feature_name]s', error: error);
+      return Left(ServerFailure(error.message));
+    } catch (error, stackTrace) {
+      logger.error('Unexpected error fetching [feature_name]s', error: error, stackTrace: stackTrace);
+      return Left(Failure('An unexpected error occurred: ${error.toString()}'));
+    }
+  }
+
+  // Implement other CRUD methods following the same pattern...
+}
+```
+
+### 4. Presentation Layer - Events
+
+Create `lib/features/[feature_name]/presentation/bloc/[feature_name]_event.dart`:
+
+```dart
+import 'package:equatable/equatable.dart';
+import 'package:learn/models/[model_name].dart';
+
+sealed class [FeatureName]Event extends Equatable {
+  const [FeatureName]Event();
+
+  @override
+  List<Object?> get props => [];
+}
+
+/// Event to fetch all [feature_name]s for a user
+class Get[FeatureName]s extends [FeatureName]Event {
+  const Get[FeatureName]s({required this.userId});
+
+  final String userId;
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+/// Event to fetch a specific [feature_name] by ID
+class Get[FeatureName]ById extends [FeatureName]Event {
+  const Get[FeatureName]ById({required this.id});
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
+/// Event to create a new [feature_name]
+class Create[FeatureName] extends [FeatureNameconst Create[FeatureName]({required this.[featureName]});
+
+  final [ModelName] [featureName];
+
+  @override
+  List<Object?> get props => [[featureName]];
+}
+
+/// Event to update an existing [feature_name]
+class Update[Fextends [FeatureName]Event {
+  const Update[FeatureName]({required this.[featureName]});
+
+  final [ModelName] [featureName];
+
+  @override
+  List<Object?> get props => [[featureName]];
+}
+
+/// Event to delete a [feature_name]
+class Delete[FeatureName] extends [FeatureName]Event {
+  const Delete[FeatureName]({
+    required this.userId,
+    required this.id,
+  });
+
+  final String userId;
+  final String id;
+
+  @override
+  List<Object?> get props => [userId, id];
+}
+```
+
+### 5. Presentation Layer - State
+
+Create `lib/features/[feature_name]/presentation/bloc/[feature_name]_state.dart`:
+
+```dart
+import 'package:equatable/equatable.dart';
+import 'package:learn/models/[model_name].dart';
+
+class [FeatureName]State extends Equatable {
+  const [FeatureName]State({
+    // List Management
+    this.[featureName]s = const [],
+    this.isLoading[FeatureName]s = false,
+    this.load[FeatureName]sError,
+
+    // Single Item Management
+    this.current[FeatureName],
+    this.isLoadingSingle[FeatureName] = false,
+    this.loadSingle[FeatureName]Error,
+
+    // Creation
+    this.isCreating[FeatureName] = false,
+    this.create[FeatureName]Error,
+    this.[featureName]JustCreated = false,
+
+    // Update
+    this.isUpdating[FeatureName] = false,
+    this.update[FeatureName]Error,
+    this.[featureName]JustUpdated = false,
+
+    // Deletion
+    this.isDeleting[FeatureName] = false,
+    this.delete[FeatureName]Error,
+    this.[featureName]JustDeleted = false,
+  });
+
+  // List Management
+  final List<[ModelName]> [featureName]s;
+  final bool isLoading[FeatureName]s;
+  final String? load[FeatureName]sError;
+
+  // Single Item Management
+  final [ModelName]? current[FeatureName];
+  final bool isLoadingSingle[FeatureName];
+  final String? loadSingle[FeatureName]Error;
+
+  // Creation
+  final bool isCreating[FeatureName];
+  final String? create[FeatureName]Error;
+  final bool [featureName]JustCreated;
+
+  // Update
+  final bool isUpdating[FeatureName];
+  final String? update[FeatureName]Error;
+  final bool [featureName]JustUpdated;
+
+  // Deletion
+  final bool isDeleting[FeatureName];
+  final String? delete[FeatureName]Error;
+  final bool [featureName]JustDeleted;
+
+  @override
+  List<Object?> get props => [
+    [featureName]s,
+    isLoading[FeatureName]s,
+    load[FeatureName]sError,
+    current[FeatureName],
+    isLoadingSingle[FeatureName],
+    loadSingle[FeatureName]Error,
+    isCreating[FeatureName],
+    create[FeatureName]Error,
+    [featureName]JustCreated,
+    isUpdating[FeatureName],
+    update[FeatureName]Error,
+    [featureName]JustUpdated,
+    isDeleting[FeatureName],
+    delete[FeatureName]Error,
+    [featureName]JustDeleted,
+  ];
+
+  [FeatureName]State copyWith({
+    List<[ModelName]>? [featureName]s,
+    bool? isLoading[FeatureName]s,
+    String? load[FeatureName]sError,
+    [ModelName]? current[FeatureName],
+    bool? isLoadingSingle[FeatureName],
+    String? loadSingle[FeatureName]Error,
+    bool? isCreating[FeatureName],
+    String? create[FeatureName]Error,
+    bool? [featureName]JustCreated,
+    bool? isUpdating[FeatureName],
+    String? update[FeatureName]Error,
+    bool? [featureName]JustUpdated,
+    bool? isDeleting[FeatureName],
+    String? delete[FeatureName]Error,
+    bool? [featureName]JustDeleted,
+  }) {
+    return [FeatureName]State(
+      [featureName]s: [featureName]s ?? this.[featureName]s,
+      isLoading[FeatureName]s: isLoading[FeatureName]s ?? this.isLoading[FeatureName]s,
+      load[FeatureName]sError: load[FeatureName]sError ?? this.load[FeatureName]sError,
+      current[FeatureName]: current[FeatureName] ?? this.current[FeatureName],
+      isLoadingSingle[FeatureName]: isLoadingSingle[FeatureName] ?? this.isLoadingSingle[FeatureName],
+      loadSingle[FeatureName]Error: loadSingle[FeatureName]Error ?? this.loadSingle[FeatureName]Error,
+      isCreating[FeatureName]: isCreating[FeatureName] ?? this.isCreating[FeatureName],
+      create[FeatureName]Error: create[FeatureName]Error ?? this.create[FeatureName]Error,
+      [featureName]JustCreated: [featureName]JustCreated ?? this.[featureName]JustCreated,
+      isUpdating[FeatureName]: isUpdating[FeatureName] ?? this.isUpdating[FeatureName],
+      update[FeatureName]Error: update[FeatureName]Error ?? this.update[FeatureName]Error,
+      [featureName]JustUpdated: [featureName]JustUpdated ?? this.[featureName]JustUpdated,
+      isDeleting[FeatureName]: isDeleting[FeatureName] ?? this.isDeleting[FeatureName],
+      delete[FeatureName]Error: delete[FeatureName]Error ?? this.delete[FeatureName]Error,
+      [featureName]JustDeleted: [featureName]JustDeleted ?? this.[featureName]JustDeleted,
+    );
+  }
+}
+```
+
+### 6. Presentation Layer - Bloc
+
+Create `lib/features/[feature_name]/presentation/bloc/[feature_name]_bloc.dart`:
+
+```dart
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:learn/features/[feature_name]/domain/i_[feature_name]_repository.dart';
+import 'package:learn/features/[feature_name]/presentation/bloc/[feature_name]_event.dart';
+import 'package:learn/features/[feature_name]/presentation/bloc/[feature_name]_state.dart';
+import 'package:learn/models/[model_name].dart';
+
+class [FeatureName]Bloc extends HydratedBloc<[FeatureName]Event, [FeatureName]State> {
+  final I[FeatureName]Repository _[featureName]Repository;
+
+  [FeatureName]Bloc({required I[FeatureName]Repository [featureName]Repository})
+    : _[featureName]Repository = [featureName]Repository,
+      super(const [FeatureName]State()) {
+    on<Get[FeatureName]s>(_get[FeatureName]s);
+    on<Get[FeatureName]ById>(_get[FeatureName]ById);
+    on<Create[FeatureName]>(_create[FeatureName]);
+    on<Update[FeatureName]>(_update[FeatureName]);
+    on<Delete[FeatureName]>(_delete[FeatureName]);
+  }
+
+  @override
+  [FeatureName]State? fromJson(Map<String, dynamic> json) {
+    try {
+      return [FeatureName]State(
+        [featureName]s: (json['[featureName]s'] as List<dynamic>?)
+            ?.map((e) => [ModelName].fromJson(e as Map<String, dynamic>))
+            .toList() ?? [],
+        current[FeatureName]: json['current[FeatureName]'] != null
+            ? [ModelName].fromJson(json['current[FeatureName]'] as Map<String, dynamic>)
+            : null,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson([FeatureName]State state) {
+    try {
+      return {
+        '[featureName]s': state.[featureName]s.map((e) => e.toJson()).toList(),
+        'current[FeatureName]': state.current[FeatureName]?.toJson(),
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _get[FeatureName]s(Get[FeatureName]s event, Emitter<[FeatureName]State> emit) async {
+    if (state.[featureName]s.isNotEmpty) {
+      emit(state.copyWith(isLoading[FeatureName]s: false));
+    } else {
+      emit(state.copyWith(isLoading[FeatureName]s: true, load[FeatureName]sError: null));
+    }
+
+    final result = await _[featureName]Repository.get[FeatureName]s(userId: event.userId);
+    
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isLoading[FeatureName]s: false,
+            load[FeatureName]sError: failure.message,
+          ),
+        );
+      },
+      ([featureName]s) async {
+        emit(state.copyWith([featureName]s: [featureName]s, isLoading[FeatureName]s: false));
+      },
+    );
+  }
+
+  Future<void> _get[FeatureName]ById(Get[FeatureName]ById event, Emitter<[FeatureName]State> emit) async {
+    emit(state.copyWith(isLoadingSingle[FeatureName]: true, loadSingle[FeatureName]Error: null));
+
+    final result = await _[featureName]Repository.get[FeatureName]ById(id: event.id);
+    
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isLoadingSingle[FeatureName]: false,
+            loadSingle[FeatureName]Error: failure.message,
+          ),
+        );
+      },
+      ([featureName]) async {
+        emit(
+          state.           current[FeatureName]: [featureName],
+            isLoadingSingle[FeatureName]: false,
+          ),
+        );
+      },
+    );
+  }
+
+  Futurete[FeatureName](Create[FeatureName] event, Emitter<[FeatureName]State> emit) async {
+    emit(state.copyWith(isCreating[FeatureName]: true, create[FeatureName]Error: null));
+
+    final result = await _[featureName]Repository.create[FeatureName]([featureName]: event.[featureName]);
+    
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isCreating[FeatureName]: false,
+            create[FeatureName]Error: failure.message,
+          ),
+        );
+      },
+      (created[FeatureName]) async {
+        final updated[FeatureName]s = [...stName]s, created[FeatureName]];
+        emit(
+          state.copyWith(
+            [featureName]s: updated[FeatureName]s,
+            isCreating[FeatureNa
+            [featureName]JustCreated: true,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _update[FeatureName](Update[FeatureName] event, Emitter<[FeatureName]State> emit) async {
+    emit(state.copyWith(isUpdating[FeatureName]: true, update[FeatureName]Error: null));
+
+    final result = await _[featureName]Repository.update[FeatureName]([featureName]: event.[featureName]);
+    
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isUpdating[FeatureName]: false,
+            update[FeatureName]Error: failure.message,
+          ),
+        );
+      },
+      (updated[FeatureName]) async {
+        final updated[FeatureName]s = state.[featureName]s
+            .m item.id == updated[FeatureName].id ? updated[FeatureName] : item)
+            .toList();
+        emit(
+          state.copyWith(
+            [featureName]s: updated[FeatureName]s,
+            current[FeatureName]: updated[FeatureName],
+            isUpdating[FeatureName]: false,
+            [featureName]JustUpdated: true,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _delete[FeatureName](Delete[FeatureName] event, Emitter<[FeatureName]State> emit) async {
+    emit(state.copyWith(isDeleting[FeatureName]: true, delete[FeatureName]Error: null));
+
+    final result = await _[featureName]Repository.delete[FeatureName](
+      userId: event.userId,
+      id: event.id,
+    );
+    
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isDeleting[FeatureName]: false,
+            delete[FeatureName]Error: failure.message,
+          ),
+        );
+      },
+      (_) async {
+        final updated[FeatureName]s = state.[featureName]s
+            .where((item) => item.id != event.id)
+            .toList();
+        emit(
+          state.copyWith(
+            [featureName]s: updated[FeatureName]s,
+            isDeleting[FeatureName]: false,
+            [featureName]JustDeleted: true,
+          ),
+        );
+      },
+    );
+  }
+}
+
+// 🚨 CRITICAL: Always await result.fold() and make both callbacks async to prevent BLoC emitter assertion errors
+
+### 7. Presentation Layer - Views
+
+Create `lib/features/[feature_name]/presentation/views/[feature_name]_list_view.dart`:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn/core/widgets/app_loader.dart';
+import 'package:learn/core/widgets/offline_banner.dart';
+import 'package:learn/features/[feature_name]/di/[feature_name]_module.dart';
+import 'package:learn/features/[feature_name]/presentation/bloc/[feature_name]_bloc.dart';
+import 'package:learn/features/[feature_name]/presentation/bloc/[feature_name]_state.dart';
+
+class [FeatureName]ListView extends StatefulWidget {
+  static Route<void> route() {
+    return MaterialPageRoute(
+      builder: (context) => BlocProvider(
+        create: (context) => [FeatureName]Module.create[FeatureName]Bloc(),
+        child: const [FeatureName]ListView(),
+      ),
+    );
+  }
+
+  const [FeatureName]ListView({super.key});
+
+  @override
+  State<[FeatureName]ListView> createState() => _[FeatureName]ListViewState();
+}
+
+class _[FeatureName]ListViewState extends State<[FeatureName]ListView> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      backgroundColor: colorScheme.background,
+      body: Column(
+        children: [
+          const OfflineBanner(),
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                _buildAppBar(context),
+                SliverPadding(
+                  padding: const EdgeInsets.all(16.0),
+                  sliver: BlocBuilder<[FeatureName]Bloc, [FeatureName]State>(
+                    builder: (context, state) {
+                      if (state.isLoading[FeatureName]s) {
+                        return const SliverToBoxAdapter(
+                          child: Center(child: AppLoader()),
+                        );
+                      }
+
+                      if (state.load[FeatureName]sError != null) {
+                        return SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              'Error: ${state.load[FeatureName]sError}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (state.[featureName]s.isEmpty) {
+                        return const SliverToBoxAdapter(
+                          child: Center(
+                            child: Text('No [feature_name]s found'),
+                          ),
+                        );
+                      }
+
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final [featureName] = state.[featureName]s[index];
+                            return ListTile(
+                              title: Text([featureName].name), // Adjust based on your model
+                              // Add your custom UI here
+                            );
+                          },
+                          childCount: state.[featureName]s.length,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverAppBar _buildAppBar(BuildContext context) {
+    return SliverAppBar.medium(
+      title: const Text('[Feature Name]s'),
+      // Add actions, styling, etc.
+    );
+  }
+}
+```
+
+### 8. Dependency Injection
+
+Create `lib/features/[feature_name]/di/[feature_name]_module.dart`:
+
+```dart
+import 'package:get_it/get_it.dart';
+import 'package:learn/core/logger/app_logger.dart';
+import 'package:learn/features/[feature_name]/data/[feature_name]_repository.dart';
+import 'package:learn/features/[feature_name]/domain/i_[feature_name]_repository.dart';
+import 'package:learn/features/[feature_name]/presentation/bloc/[feature_name]_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class [FeatureName]Module {
+  static final GetIt _getIt = GetIt.instance;
+  static const String _moduleName = '[FeatureName]Module';
+
+  static Future<void> init() async {
+    logger.info('🔄 $_moduleName: Initializing module');
+
+    try {
+      await _registerDependencies();
+      logger.info('✅ $_moduleName: Module initialized successfully');
+    } catch (e, stackTrace) {
+      logger.error(
+        '❌ $_moduleName: Failed to initialize module',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  static Future<void> _registerDependencies() async {
+    await _registerRepositories();
+    await _registerBlocs();
+  }
+
+  static Future<void> _registerRepositories() async {
+    // Repository as SINGLETON
+    if (!_getIt.isRegistered<I[FeatureName]Repository>()) {
+      _getIt.registerSingleton<I[FeatureName]Repository>(
+        [FeatureName]Repository(supabase: Supabase.instance.client),
+      );
+      logger.info('✅ $_moduleName: Repository registered as singleton');
+    }
+  }
+
+  static Future<void> _registerBlocs() async {
+    // Bloc as FACTORY
+    if (!_getIt.isRegistered<[FeatureName]Bloc>()) {
+      _getIt.registerFactory<[FeatureName]Bloc>(
+        () => [FeatureName]Bloc([featureName]Repository: _getIt<I[FeatureName]Repository>()),
+      );
+      logger.info('✅ $_moduleName: Bloc registered as factory');
+    }
+  }
+
+  // Factory methods for creating BLoC instances
+  static [FeatureName]Bloc create[FeatureName]Bloc() => _getIt<[FeatureName]Bloc>();
+
+  // Getter for repository
+  static I[FeatureName]Repository getRepository() => _getIt<I[FeatureName]Repository>();
+
+  // Cleanup
+  static Future<void> dispose() async {
+    logger.info('🔄 $_moduleName: Disposing module');
+    // Add cleanup logic here
+    logger.info('✅ $_moduleName: Module disposed');
+  }
+}
+```
+
+### 9. Generate Freezed Files (Models Only)
+
+Run the following commands to generate freezed files for your models (not needed for blocs anymore):
+
+```bash
+flutter packages pub run build_runner build --delete-conflicting-outputs
+```
+
+**Note**: You only need to run build_runner when you create or modify freezed models, not for bloc events and states since they now use equatable.
+
+### 10. Register Module in Main DI
+
+Add your module to the main dependency injection setup in `lib/core/di/di.dart`:
+
+```dart
+// In your main DI file
+import 'package:learn/features/[feature_name]/di/[feature_name]_module.dart';
+
+// Initialize the module (usually in initDependencies() function)
+await [FeatureName]Module.init();
+```
+
+**Important:** The module should be initialized in `main.dart` before running the app:
+
+```dart
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize other dependencies...
+  
+  // Initialize your feature module
+  await [FeatureName]Module.init();
+  
+  runApp(const MyApp());
+}
+```
+
+## 📝 Important Notes
+
+### 🚨 CRITICAL: BLoC Async Operations Pattern
+**ALWAYS follow this pattern when using `result.fold()` in BLoC event handlers to prevent emitter assertion errors:**
+
+```dart
+// ✅ CORRECT: Always await fold() with async callbacks
+final result = await _repository.someOperation();
+
+await result.fold(
+  (failure) async {  // ✅ Both callbacks must be async
+    emit(state.copyWith(error: failure.message));
+  },
+  (success) async {  // ✅ Both callbacks must be async
+    emit(state.copyWith(data: success));
+  },
+);
+```
+
+```dart
+// ❌ WRONG: This will cause BLoC emitter assertion errors
+result.fold(
+  (failure) {  // ❌ Missing async
+    emit(state.copyWith(error: failure.message));
+  },
+  (success) async {  // ❌ Only one callback is async - creates race condition
+    emit(state.copyWith(data: success));
+  },
+);
+```
+
+**Why this happens:**
+- The `fold` method doesn't wait for async callbacks to complete
+- Async callbacks can continue running after the method finishes
+- This creates race conditions where multiple `emit` calls happen simultaneously
+- BLoC's emitter prevents concurrent emissions, causing assertion errors
+
+**The fix:**
+- Always use `await result.fold()`
+- Make both success and failure callbacks `async`
+- This ensures all async operations complete before the method finishes
+
+### State Management Architecture
+**We use different approaches for different types of classes:**
+
+#### 🔧 Equatable for Blocs:
+```dart
+// Events and States use Equatable
+sealed class [FeatureName]Event extends Equatable {
+  const [FeatureName]Event();
+  @override
+  List<Object?> get props => [];
+}
+
+class [FeatureName]State extends Equatable {
+  const [FeatureName]State({...});
+  
+  @override
+  List<Object?> get props => [...];
+  
+  // Manual copyWith implementation
+  [FeatureName]State copyWith({...}) {
+    return [FeatureName]State(...);
+  }
+}
+```
+
+#### ❄️ Freezed for Models:
+```dart
+// Models continue to use Freezed for rich functionality
+@freezed
+class [ModelName] with _$[ModelName] {
+  const factory [ModelName]({
+    required String id,
+    required String name,
+    // ... other fields
+  }) = _[ModelName];
+
+  factory [ModelName].fromJson(Map<String, dynamic> json) =>
+      _$[ModelName]FromJson(json);
+}
+```
+
+### Benefits of This Approach:
+✅ **No build_runner for blocs** - Faster development iteration  
+✅ **Rich model functionality** - Keep freezed features for data classes  
+✅ **Clean separation** - Different tools for different purposes  
+✅ **Less complexity** - Simpler bloc implementations  
+✅ **Better performance** - No code generation overhead for state management  
+
+### Supabase Syntax Patterns
+**ALWAYS use the correct Supabase syntax with supadart-generated models:**
+
+#### ✅ Correct Syntax:
+```dart
+// Import supadart_header for table accessors
+import 'package:learn/models/supadart_header.dart';
+
+// Use table accessors instead of .from()
+final data = await _supabase.[table_name]   // ✅ Correct
+    .select('*')
+    .eq([ModelName].c_id, id)
+    .withConverter([ModelName].converter);
+
+// Use model column constants
+.eq([ModelName].c_id, id)                   // ✅ Correct
+.select([ModelName].c_fieldName)            // ✅ Correct
+
+// Use model update methods
+final updateData = [ModelName].update(fieldName: value);
+await _supabase.[table_name].update(updateData);  // ✅ Correct
+
+// Use converters properly for single items
+final item = [ModelName].converterSingle(itemData);  // ✅ Correct
+
+// For maybeSingle() queries that might return null
+final itemData = await _supabase.[table_name]
+    .select('*')
+    .eq([ModelName].c_id, id)
+    .maybeSingle();
+
+if (itemData != null) {
+  final item = [ModelName].converterSingle(itemData);
+}
+```
+
+#### ❌ Incorrect Syntax (Don't use):
+```dart
+// Don't use .from() with string table names
+final data = await _supabase.from('table_name')  // ❌ Wrong
+
+// Don't use hardcoded column names
+.eq('id', id)                               // ❌ Wrong
+.select('field_name')                       // ❌ Wrong
+
+// Don't use manual JSON objects
+await _supabase.from('table_name')          // ❌ Wrong
+    .update({'field_name': value});
+
+// Don't use .withConverter() with single converters
+.withConverter([ModelName].converterSingle)  // ❌ Wrong (type error)
+
+// Don't use .fromJson() when you have converters
+final item = [ModelName].fromJson(itemData);  // ❌ Less preferred
+```
+
+#### Key Benefits:
+- **Type Safety**: Column constants prevent typos
+- **Auto-completion**: IDE support for all fields
+- **Refactoring**: Changes propagate automatically
+- **Consistency**: Same pattern across all repositories
+
+### Package Management
+- **NEVER** edit `pubspec.yaml` manually
+- Use `flutter pub add [package_name]` to add dependencies
+- Example: `flutter pub add uuid` for UUID generation
+
+### State Management Rules
+1. Each operation has independent states (loading, success, error)
+2. Use `HydratedBloc` for state persistence
+3. Handle caching intelligently for offline support
+4. Use `Either<Failure, T>` for all repository returns
+5. **Blocs use Equatable** - no build_runner needed
+6. **Models use Freezed** - rich functionality preserved
+
+### Error Handling
+1. Repository handles all connectivity checks
+2. Use specific failure types: `NetworkFailure`, `ServerFailure`, `NotFoundFailure`
+3. Bloc simply uses `failure.message` in error states
+4. Repository pes user-friendly error messages
+
+### UI Guidelines
+1. Use the existing color scheme, never hardcode colors
+2. Create beautiful and professional, futuristic UIs with subtile animations
+3. Add subtle touches of secondary color
+4. Use named arguments in function calls
+5. Check `lib/core/widgets/` for reusable components
+
+### 🎨 Design System Rules (CRITICAL)
+
+**When writing plan files for UI features, ALWAYS include this instruction:**
+
+> **"Before creating any UI components, the agent MUST check the design system rules in `.cursor/rules/design_system.mdc` and follow them strictly. All UI components must adhere to the design system guidelines including color usage, typography, spacing, component patterns, and animation guidelines."**
+
+**Agent Responsibilities:**
+- ✅ **ALWAYS read** `.cursor/rules/design_system.mdc` before creating any UI
+- ✅ **Follow design system rules strictly** - no exceptions
+- ✅ **Use design system components** instead of creating custom ones
+- ✅ **Check for existing widgets** in `lib/core/widgets/` before creating new ones
+- ✅ **Apply design system patterns** consistently across all UI
+
+**What to Check in Design System:**
+- Color scheme usage (never hardcode colors)
+- Typography scales and styles
+- Spacing and padding standards
+- Component patterns and structures
+- Animation guidelines
+- Icon usage rules
+- Button styles and variants
+- Form input patterns
+- Card and container styles
+
+### Architecture Principles
+1. **MVVM + Clean Architecture**: Strict separation of concerns
+2. **Feature-first**: Each feature is self-contained
+3. **Dependency Injection**: Use GetIt for all dependencies
+4. **Reactive State**: Use BlocBuilder for UI reactivity
+5. **Offline-first**: Handle network failures gracefully
+6. **Hybrid State Management**: Equatable for blocs, Freezed for models
+
+## 🔧 Quick Commands
+
+```bash
+# Generate freezed files (models only)
+dart run build_runner build --delete-conflicting-outputs
+
+# Add a new package
+flutter pub add [package_name]
+
+# Run the app
+flutter run
+```
+
+This framework ensures consistency, maintainability, and follows clean architecture principles across all features in the application, while providing the best developer experience with minimal build_runner usage.
+
+## 🗄️ **Local Storage with Hive & Sync Panel Architecture**
+
+### **Overview**
+Based on the rightal_flashcards implementation, we use an **offline-first approach** with Hive for local storage and a sync panel for managing cloud synchronization. This ensures the app works seamlessly offline while providing sync capabilities when online.
+
+### **Architecture Components**
+
+#### **1. Local Service (Hive Storage)**
+```dart
+class Local[FeatureName]Service {
+  static const String _itemsBoxName = '[feature_name]_box';
+  static const String _syncStatusBoxName = '[feature_name]_sync_status_box';
+  static const String _syncQueueBoxName = '[feature_name]_sync_queue_box';
+
+  late Box<Map> _itemsBox;
+  late Box<Map> _syncStatusBox;
+  late Box<Map> _syncQueueBox;
+
+  // Core CRUD operations
+  Future<void> save[Item]([ModelName] item) async;
+  Future<[ModelName]?> get[Item](String itemId) async;
+  Future<List<[ModelName]>> get[Items]ForUser(String userId) async;
+  Future<void> delete[Item](String itemId) async;
+
+  // Sync management
+  Future<List<Map<String, dynamic>>> getUnsyncedItems() async;
+  Future<void> markAsSynced(String itemId) async;
+  Future<Map<String, dynamic>?> getSyncStatus(String itemId) async;
+}
+```
+
+#### **2. Sync Service (Cloud Operations)**
+```dart
+class [FeatureName]SyncService {
+  // Upload operations
+  Future<Either<Failure, [ModelName]>> upload[Item]({
+    required [ModelName] item,
+    String? deviceId,
+  }) async;
+
+  // Download operations
+  Future<Either<Failure, List<[ModelName]>>> downloadAll[Items]({
+    required String userId,
+  }) async;
+
+  // Batch operations
+  Future<Either<Failure, List<[ModelName]>>> upload[Items]({
+    required List<[ModelName]> items,
+  }) async;
+}
+```
+
+#### **3. Sync Cubit (Sync Panel State Management)**
+```dart
+class [FeatureName]SyncCubit extends Cubit<[FeatureName]SyncState> {
+  // Load content from both local and cloud
+  Future<void> loadAllContent(String userId) async;
+  
+  // Sync operations
+  Future<void> syncAllUserContent(String userId) async;
+  Future<void> uploadItem([ModelName] item, String userId) async;
+  Future<void> downloadItem([ModelName] item, String userId) async;
+}
+
+// Sync States
+abstract class [FeatureName]SyncState extends Equatable {}
+class [FeatureName]SyncInitial extends [FeatureName]SyncState {}
+class [FeatureName]SyncLoading extends [FeatureName]SyncState {}
+class [FeatureNyncLoaded extends [FeatureName]SyncState {
+  final List<[ModelName]> localItems;
+  final List<[ModelName]> cloudItems;
+  final List<[ModelName]> localOnlyItems;
+  final List<[ModelName]> cloudOnlyItems;
+  final List<[ModelN bothItems;
+}
+class [FeatureName]SyncSyncing extends [FeatureName]SyncState {}
+class [FeatureName]SyncSuccess extends [FeatureName]SyncState {}
+class [FeatureName]SyncError extends [FeatureName]SyncState {}
+```
+
+#### **4. Repository Implementation (Offline-First)**
+```dart
+class [FeatureName]Repository implements I[FeatureName]Repository {
+  final Local[FeatureName]Service _localService;
+  final [FeatureName]SyncService _syncService;
+
+  @override
+  Future<Either<Failure, List<[ModelName]>>> get[Items]({
+    required String userId,
+  }) async {
+    try {
+      // ALWAYS fetch from local storage first
+      await _localService.initialize();
+      final items = await _localService.get[Items]ForUser(userId);
+      
+      // If no local data, suggest checking sync panel
+      if (items.isEmpty) {
+        logger.info('📱 No local data found. User should check sync panel for cloud data.');
+      }
+      
+      return Right(items);
+    } catch (error) {
+      return Leflure('Failed to fetch items: ${error.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, [ModelName]>> cretem]({
+    required [ModelName] item,
+    bool requiresInternet = false, // Specify in feature plan
+  }) async {
+    try {
+      // Check if this create operation requires internet (e.g., AI processing)
+      if (requiresInternet) {
+        final isConnected = await _connectivityUtil.isConnected();
+        if (!isConnected) {
+          logger.warning('📱 No internet connection. Create operation requires internet.');
+          return Left(NetworkFailure('No internet connection. This feature requires internet access.'));
+        }
+      }
+
+      // Save to local storage first (for offline-capable creates)
+      await _localService.save[Item](item);
+      
+      // Background sync to cloud (fire and forget) or immediate sync for AI creates
+      if (requiresInternet) {
+        // Immediate sync for internet-required creates
+        final result = await _syncService.upload[Item](item: item);
+        return result.fold(
+          (failure) => Left(failure),
+          (syncedItem) {
+            _localService.markAsSynced(item.id);
+            return Right(syncedItem);
+          },
+        );
+      } else {
+        // Background sync for offline-capable creates
+   _sync[Item]ToCloud(item);
+        return Right(item);
+      }
+    } catch (error) {
+      return Left(Failure('Failed to create item: ${error.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, [ModelName]>> update[Item]({
+    required [ModelName] item,
+  }) async {
+    try {
+      // Check network connectivity for updates
+      final isConnected = await _connectivityUtil.isConnected();
+      if (!isConnected) {
+        logger.warning('📱 No internet connection. Update operation blocked (read-only mode).');
+        return Left(NetworkFailure('No internet connection. Feature is in read-only mode.'));
+      }
+
+      // Update in local storage first
+      await _localService.save[Item](item);
+      
+      // Immediately sync update to cloud (required for updates)
+      final result = await _syncService.upload[Item](item: item);
+      
+      return result.fold(
+        (failure) {
+          logger.error('❌ Failed to sync update to cloud: ${failure.message}');
+          // Revert local changes if cloud sync fails
+          // Note: Implement rolllogic based on your needs
+          return Left(failure);
+        },
+        (syncedItem) {
+          logger.info('✅ Successfully updated item in both local and cloud: ${item.id}');
+          _localService.markAsSynced(item.id);
+          return Right(syncedItem);
+        },
+      );
+    } catch (error) {
+      return Left(Failure('Failed to update item: ${error.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> delete[Item]({
+    required String userId,
+    required String itemId,
+  }) async {
+    try {
+      // Check network connectivity for deletes
+      final isConnected = await _connectivityUtil.isConnected();
+      if (!isConnected) {
+        logger.warning('📱 No internet connection. Delete operation blocked (read-only mode).');
+        return Left(NetworkFailure('No internet connection. Feature is in read-only mode.'));
+      }
+
+      // Delete from local storage first
+      await _localService.delete[Item](itemId);
+      
+      // Immediately sync deletion to cloud (required for deletes)
+      final result = await _syncService.delete[Item](
+        itemId: itemId,
+        userId: userId,
+      );
+      
+      return result.fold(
+        (failure) {
+          logger.error('❌ Failed to sync deletion to cloud: ${failure.message}');
+          // Note: Consider restoring local item if cloud deletion fails
+          return Left(failure);
+        },
+        (_) {
+          logger.info('✅ Successfully deleted item from both local and cloud: $itemId');
+          return const Right(unit);
+        },
+      );
+    } catch (error) {
+      return Left(Failure('Failed to delete item: ${error.toString()}'));
+    }
+  }
+
+  /// Background sync to cloud (fire and forget)
+  Future<void> _sync[Item]ToCloud([ModelName] item) async {
+    try {
+      final isConnected = await _connectivityUtil.isConnected();
+      if (!isConnected) {
+        logger.info('📱 No internet connection, item will sync later: ${item.id}');
+        return;
+      }
+
+      final result = await _syncService.upload[Item](item: item);
+      result.fold(
+        (failure) => logger.warning('⚠️ Failed to sync item to cloud: ${failure.message}'),
+        (syncedItem) {
+          logger.info('✅ Successfully synced item to cloud: ${item.id}');
+          _localService.markAsSynced(item.id);
+        },
+      );
+    } catch (e) {
+      logger.warning('⚠️ Background sync failed for item ${item.id}: $e');
+    }
+  }
+}
+```
+
+#### **5. Sync Panel UI**
+```dart
+class [FeatureName]SyncPanel extends StatefulWidget {
+  static Widget withProvider({required String userId}) {
+    return BlocProvider(
+      create: (context) => [FeatureName]SyncCubit(
+        localService: Local[FeatureName]Service(),
+        syncService: [FeatureName]SyncService(),
+      ),
+      child: [FeatureName]SyncPanel(userId: userId),
+    );
+  }
+}
+
+class _[FeatureName]SyncPanelState extends State<[FeatureName]SyncPanel> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<[FeatureName]SyncCubit, [FeatureName]SyncState>(
+      listener: (context, state) {
+        if (state is [FeatureName]SyncSuccess) {
+          AppSnackBar.show(context: context, message: state.message, type: SnackBarType.success);
+        } else if (state is [FeatureName]SyncError) {
+          AppSnackBar.show(context: context, message: state.message, type: SnackBarType.error);
+        }
+      },
+      builder: (context, state) {
+        return Column(
+          children: [
+            _buildSyncHeader(state),
+            _buildSyncContent(state),
+            _buildSyncActions(state),
+          ],
+        );
+      },
+    );
+  }
+}
+```
+
+### **Operation Modes & Connectivity Requirements**
+
+#### **📖 Read Operations (Always Available)**
+- **Fetch from local storage first**
+- **No internet connection required**
+- **Instant response from Hive storage**
+
+#### **➕ Create Operations (Depends on Feature)**
+- **Simple creates**: Save to local storage immediately, background sync to cloud
+- **AI-powered creates**: Require internet connection for AI processing
+- **Offline capability**: Specified in each feature's implementation plan
+- **Queued for sync when connection restored** (for offline-capable creates)
+
+#### **✏️ Update Operations (Online Required)**
+- **Requires active internet connection**
+- **Updates both local and cloud simultaneously**
+- **Fails with NetworkFailure if offline**
+- **Prevents data conflicts across devices**
+- **Feature becomes read-only when offline**
+
+#### **🗑️ Delete Operations (Online Required)**
+- **Requires active internet connection**
+- **Deletes from both local and cloud simultaneously**
+- **Fails with NetworkFailure if offline**
+- **Prevents orphaned data across devices**
+- **Feature becomes read-only when offline**
+
+### **Key Implementation Patterns**
+
+#### **1. Offline-First Strategy**
+- **Repository always fetches from local storage first**
+- **Create operations**: Offline capability specified in feature plan (AI features require internet)
+- **Update operations require both local and cloud sync** (read-only mode when offline)
+- **Delete operations require both local and cloud sync** (read-only mode when offline)
+- **App works fully offline for read but for create operations it will be specifiled in the plan**
+
+#### **2. Sync Queue Management**
+- **Every local change is added to sync queue**
+- **Sync queue tracks unsynced items with retry logic**
+- **Items are marked as synced after successful cloud upload**
+- **Failed syncs remain in queue for retry**
+
+#### **3. Sync Panel Features**
+- **Shows local vs cloud data comparison**
+- **Categorizes items: local-only, cloud-only, both**
+- **Provides upload/download actions**
+- **Displays sync statistics and status**
+
+#### **4. User Experience Flow**
+1. **User opens feature → Repository fetches from local storage**
+2. **If no local data → Log suggests checking sync panel**
+3. **User can access sync panel to see cloud data**
+4. **User can download cloud data or upload local data**
+5. **Create operations**: Offline capability depends on feature (specified in plan)
+6. **Update/Delete operations require internet connection (read-only mode when offline)**
+
+### **Directory Structure for Multiple State Management**
+
+#### **Single Bloc/Cubit Structure:**
+```
+lib/features/[feature_name]/
+├── presentation/
+│   ├── bloc/              # Main feature state (if using Bloc)
+│   │   ├── [feature_name]_bloc.dart
+│   │   ├── [feature_name]_event.dart
+│   │   └── [feature_name]_state.dart
+│   └── cubit/             # Additional state (if using Cubit)
+│       ├── [feature_name]_sync_cubit.dart
+│       └── [feature_name]_sync_state.dart
+```
+
+#### **Multiple Blocs/Cubits Structure:**
+```
+lib/features/[feature_name]/
+├── presentation/
+│   ├── bloc/
+│   │   ├── [feature_name]/           # Main feature bloc
+│   │   │   ├── [feature_name]_bloc.dart
+│   │   │   ├── [feature_name]_event.dart
+│   │   │   └── [feature_name]_state.dart
+│   │   └── [sub_feature]/            # Additional feature bloc
+│   │       ├── [sub_feature]_bloc.dart
+│   │       ├── [sub_feature]_event.dart
+│   │       └── [sub_feature]_state.dart
+│   └── cubit/
+│       ├── [feature_name]_sync/      # Sync cubit
+│       │   ├── [feature_name]_sync_cubit.dart
+│       │   └── [feature_name]_sync_state.dart
+│       └── [other_feature]/          # Other cubits
+│           ├── [other_feature]_cubit.dart
+│           └── [other_feature]_state.dart
+```
+
+### **Benefits of This Architecture**
+✅ **True offline-first experience for reads and simple creates**  
+✅ **Flexible create operations** (offline or online based on feature requirements)  
+✅ **User control over sync operations**  
+✅ **Robust conflict resolution**  
+✅ **Transparent sync status**  
+✅ **Works across multiple devices**  
+✅ **Handles network interruptions gracefully**  
+✅ **Prevents data conflicts with read-only mode for updates/deletes**  
+✅ **Ensures data consistency across devices**  
+✅ **No orphaned data from failed deletions**  
+
+## 📋 **Documentation Overview**
+
+### **🏗️ Architecture Framework**
+- **Clean Architecture + MVVM**: Strict separation of concerns
+- **Feature-first approach**: Self-contained features  
+- **Layer structure**: DI → Data → Domain → Presentation → Utils
+- **Hybrid State Management**: Equatable for blocs, Freezed for models
+
+### **🚀 Complete Implementation Guide**
+
+**1. Project Structure**: Clear directory layout for consistency  
+**2. Domain Layer**: Repository interface with Either pattern  
+**3. Data Layer**: Repository implementation with connectivity checks  
+**4. Presentation Layer**: Equatable events/states with HydratedBloc  
+**5. Views**: Template for list/detail/add views with routing  
+**6. Dependency Injection**: GetIt module setup  
+**7. Code Generation**: Only for models, not blocs
+
+### **📝 Key Guidelines**
+
+**State Management:**
+- Each operation has independent states
+- `HydratedBloc` for persistence  
+- Smart caching for offline support
+- `Either<Failure, T>` pattern throughout
+- **Equatable for blocs** - no build_runner needed
+- **Freezed for models** - rich functionality preserved
+
+**Error Handling:**
+- Repository handles all connectivity logic
+- Specific failure types (`NetworkFailure`, `ServerFailure`, etc.)
+- User-friendly error messages
+- Graceful offline behavior
+
+**UI Standards:**
+- Use color scheme, never hardcode colors
+- Professional and beautiful designs
+- Named arguments preference
+- Reuse core widgets
+
+**Development Workflow:**
+- Never edit `pubspec.yaml` manually
+- Use `flutter pub add` for packages
+- Generate freezed files only for models
+- Register modules in main DI
+
+## 🎯 **Benefits**
+
+✅ **Faster Development**: No build_runner for blocs  
+✅ **Rich Models**: Keep freezed functionality where it matters  
+✅ **Consistency**: All features follow the same pattern  
+✅ **Maintainability**: Clear structure and separation of concerns  
+✅ **Testability**: Clean interfaces and dependency injection  
+✅ **Scalability**: Easy to add new features  
+✅ **Offline-first**: Built-in network handling  
+✅ **Type Safety**: Equatable + Freezed hybrid approach  
+
+This documentation will ensure that all future features follow the same high-quality architecture pattern with optimal developer experience! 🚀
+
+---
+
+## 📚 Related Documentation
+
+### **BLoC & Dependency Injection Deep Dive**
+For detailed guidance on BLoC lifecycle management, dependency injection patterns, and common mistakes to avoid, see:
+- **[new_feature_guide.md](.cursor/rules/new_feature_guide.md)** - Comprehensive guide on:
+  - How to properly register blocs as factories and repositories as singletons
+  - Route management and navigation patterns
+  - Why you should never pass blocs as parameters
+  - Common mistakes and how to avoid them
+  - Complete examples from real modules
+
+**Use both guides together:**
+1. **feature_implementation.md** (this file) - Overall feature architecture and structure
+2. **new_feature_guide.md** - BLoC lifecycle and DI best practices
+
+These guides are complementary and should be followed together for complete implementation guidance.
+
+---
+
+## 📋 Summary of New Rules
+
+### 1. **SnapSort Spaces Feature Organization**
+- Each sub-feature in `learn_space` gets its own folder in `bloc/`, `views/`, and `widgets/`
+- Example: `bloc/announcement/`, `views/announcement/`, `widgets/announcement/`
+- Keeps features separate and maintainable
+- Prevents file clutter in shared directories
+
+### 2. **Model Generation Restrictions**
+- **ONLY human can run migrations and generate models**
+- **Agent must code as if models exist** (ignore lint errors)
+- **Agent must NOT create model files or use generic classes**
+- Lint errors will resolve automatically after model generation
+- Agent writes migration SQL and all code, human generates Dart models
+
+### 3. **Design System Compliance**
+- **Plan files MUST instruct agents** to check design system rules first
+- **Agents MUST read** `.cursor/rules/design_system.mdc` before creating UI
+- **Agents MUST follow design system strictly** - no exceptions
+- All UI must use design system components and patterns
+- Check for existing widgets in `lib/core/widgets/` before creating new ones

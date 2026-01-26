@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 📝 Feature Implementation Progress Documentation
+
+This file tracks the progress of feature implementation and changes made during development.
+
+## 📋 Documentation Rules
+
+1. **No Modifications to Existing Content**
+   - Only append new changes
+   - Preserve all existing documentation
+
+2. **New File/Function Documentation**
+   - Document file/function name
+   - Describe its purpose and functionality
+   - Explain current usage
+   - No code examples - keep it high-level
+
+3. **Function Updates**
+   - Note the function name
+   - Describe what was modified
+   - Explain new functionality
+   - Document where it's being used
+
+4. **Progress Updates Format**
+   - Use clear, concise language
+   - Focus on what was done
+   - Include purpose and usage
+   - Example: "Created X function to handle Y, currently used in Z"
+
+This format ensures clear documentation that's easy to read and maintain, while preserving context for future reference.

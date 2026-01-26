@@ -1,0 +1,253 @@
+# Logging Rules for AI Agents
+
+## Overview
+
+When writing code for the SnapSort app, always use the global `logger` instance for all logging. Never use `print()`, `debugPrint()`, or `print()` statements.
+
+## Core Rules
+
+### 1. Always Use Logger
+
+**NEVER use:**
+```dart
+print('Some message');
+debugPrint('Debug info');
+```
+
+**ALWAYS use:**
+```dart
+import 'package:learn/core/logger/app_logger.dart';
+
+logger.debug('Debug message');
+logger.info('Info message');
+logger.warning('Warning message');
+logger.error('Error message', error: e, stackTrace: stackTrace);
+```
+
+### 2. Log Levels
+
+Use the appropriate log level for each situation:
+
+- **`logger.debug()`**: Detailed debugging information, verbose details
+  - Use for: Step-by-step process tracking, detailed state information
+  - Example: `logger.debug('🔄 Processing item ${item.id}')`
+
+- **`logger.info()`**: Important events, status updates, successful operations
+  - Use for: Operation completions, important state changes, user actions
+  - Example: `logger.info('✅ Material uploaded successfully')`
+
+- **`logger.warning()`**: Potential issues that don't break functionality
+  - Use for: Deprecated API usage, fallback behavior, non-critical errors
+  - Example: `logger.warning('⚠️ Using fallback method')`
+
+- **`logger.error()`**: Actual errors that need attention
+  - Use for: Exceptions, failures, critical issues
+  - Always include error and stackTrace: `logger.error('❌ Failed to save', error: e, stackTrace: stackTrace)`
+
+### 3. Category Detection
+
+The logger automatically detects which feature a log belongs to based on message content. Include relevant keywords in your log messages:
+
+**Study Timer:**
+```dart
+logger.info('🔄 StudyTimer: Starting timer for material ${materialId}');
+```
+
+**Mock Exams:**
+```dart
+logger.info('📝 MockExam: User started exam ${examId}');
+```
+
+**Study Session:**
+```dart
+logger.info('📊 StudySession: Session started');
+```
+
+**Study Analytics:**
+```dart
+logger.info('📈 Analytics: Progress updated');
+```
+
+**Materials:**
+```dart
+logger.info('📄 Material: PDF processed successfully');
+```
+
+**Courses:**
+```dart
+logger.info('📚 Course: Course created');
+```
+
+**Auth:**
+```dart
+logger.info('🔐 Auth: User logged in');
+```
+
+**Payment:**
+```dart
+logger.info('💳 Payment: Purchase initiated');
+```
+
+**AI Generation:**
+```dart
+logger.info('🤖 SnapSortAI: Generating explanation');
+```
+
+### 4. Message Format
+
+- Include context in messages (what, where, why)
+- Use emojis sparingly for visual scanning:
+  - ✅ Success/complete
+  - 🔄 Processing/loading
+  - ⚠️ Warning
+  - ❌ Error
+  - 💡 Info/tip
+- Include relevant IDs or identifiers when available
+
+**Good examples:**
+```dart
+logger.info('✅ StudyTimer: Timer stopped for material ${materialId}, duration: ${duration}s');
+logger.error('❌ MockExam: Failed to submit exam ${examId}', error: e, stackTrace: stackTrace);
+logger.debug('🔄 StudySession: Updating session context ${contextId}');
+```
+
+**Bad examples:**
+```dart
+logger.info('Done');  // Too vague
+logger.debug('Error');  // Should use logger.error for errors
+logger.info('User password: $password');  // Never log sensitive data
+```
+
+### 5. Error Logging
+
+Always include error and stackTrace when logging errors:
+
+```dart
+try {
+  // some operation
+} catch (e, stackTrace) {
+  logger.error(
+    '❌ Operation failed: ${e.toString()}',
+    error: e,
+    stackTrace: stackTrace,
+  );
+}
+```
+
+### 6. Never Log Sensitive Data
+
+**NEVER log:**
+- Passwords
+- API keys
+- Tokens
+- Personal user data (unless anonymized)
+- Payment information
+
+**Instead, log:**
+- Operation status
+- Error types (not full error messages with sensitive data)
+- IDs and references
+
+### 7. Bloc Logging
+
+The bloc observer automatically logs bloc lifecycle events. You don't need to manually log bloc events unless you need custom logging.
+
+If you need custom bloc logging, use appropriate category keywords:
+
+```dart
+// In a bloc
+logger.debug('🔄 StudyTimerBloc: State updated to ${state.runtimeType}');
+```
+
+### 8. Configuration
+
+Logging configuration is set in `lib/main.dart`. Developers can control what logs they see using `LogConfig`. Your job is to write good log statements - the configuration handles filtering.
+
+## Examples
+
+### Service Method
+
+```dart
+class MaterialService {
+  Future<void> uploadMaterial(String materialId) async {
+    logger.info('📄 Material: Starting upload for ${materialId}');
+    
+    try {
+      // Upload logic
+      logger.info('✅ Material: Upload completed for ${materialId}');
+    } catch (e, stackTrace) {
+      logger.error(
+        '❌ Material: Upload failed for ${materialId}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+}
+```
+
+### Repository Method
+
+```dart
+class MaterialRepository {
+  Future<Material> getMaterial(String id) async {
+    logger.debug('📄 Material: Fetching material ${id}');
+    
+    try {
+      final material = await _remoteDataSource.getMaterial(id);
+      logger.info('✅ Material: Retrieved material ${id}');
+      return material;
+    } catch (e, stackTrace) {
+      logger.error(
+        '❌ Material: Failed to fetch material ${id}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+}
+```
+
+### Bloc Event Handler
+
+```dart
+class StudyTimerBloc extends Bloc<StudyTimerEvent, StudyTimerState> {
+  void _onStartTimer(StartTimer event, Emitter<StudyTimerState> emit) {
+    logger.info('🔄 StudyTimer: Starting timer for material ${event.materialId}');
+    
+    try {
+      // Timer logic
+      emit(TimerRunning(duration: 0));
+      logger.debug('🔄 StudyTimer: Timer state updated to TimerRunning');
+    } catch (e, stackTrace) {
+      logger.error(
+        '❌ StudyTimer: Failed to start timer',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      emit(TimerError(message: e.toString()));
+    }
+  }
+}
+```
+
+## Reference
+
+- **Logging Guide**: `docs/development/logging_guide.md`
+- **Logger Implementation**: `lib/core/logger/app_logger.dart`
+- **Log Configuration**: `lib/core/logger/log_config.dart`
+- **Main Configuration**: `lib/main.dart`
+
+## Summary Checklist
+
+When writing code, ensure:
+
+- [ ] Using `logger` instead of `print()` or `debugPrint()`
+- [ ] Using appropriate log level (debug/info/warning/error)
+- [ ] Including relevant context in messages
+- [ ] Including error and stackTrace for error logs
+- [ ] Not logging sensitive data
+- [ ] Using category keywords for automatic filtering
+- [ ] Including relevant IDs or identifiers
