@@ -190,7 +190,7 @@ Before starting, gather the following information about your new app:
 
 ---
 
-### Phase 6: Legal & Informational Pages
+### Phase 6: Legal & Informational Pages (pls write a complete privacypolicy relevant to the app we are doing, shoudld be very long and look professional, do not just list stuff out)
 
 #### 6.1 `landing_page/app/privacy-policy/page.tsx`
 | Line | What to Change | Current Value |
@@ -198,7 +198,7 @@ Before starting, gather the following information about your new app:
 | 11 | Page description | References general privacy approach |
 | 19 | Content | `"Caply is designed with a 'Privacy First' approach"` |
 | 57 | Support email | `support@caply.app` |
-| 62 | Last updated date | `January 17, 2026` |
+| 62 | Last updated date | `January 17, 2026` | 
 
 **Action Items:**
 - [ ] Replace all instances of app name with new name
@@ -206,7 +206,7 @@ Before starting, gather the following information about your new app:
 - [ ] Update "Last Updated" date
 - [ ] Review and customize privacy policy content as needed
 
-#### 6.2 `landing_page/app/terms/page.tsx`
+#### 6.2 `landing_page/app/terms/page.tsx` (pls write a complete terms of service relevant to the app we are doing, shoudld be very long and look professional, do not just list stuff out)
 | Line | What to Change | Current Value |
 |------|----------------|---------------|
 | 11 | Page description | References "Caply" |
