@@ -4,6 +4,10 @@
 > **Target**: Fast approval, professional quality, zero user data collection.
 
 ---
+## General Development Guidelines
+
+- **Dependency Management**: Never manually edit `pubspec.yaml`. Always use terminal commands (e.g., `flutter pub add`) to add dependencies to ensure the latest compatible versions are used.
+- **Data Modeling**: Use standard Dart classes for all data models. Do not use `freezed` or other code-generation libraries.
 
 ## 1. AI Model Configuration
 
@@ -11,7 +15,7 @@
 | Setting | Value |
 |---------|-------|
 | Provider | Google Gemini |
-| Model ID | `gemma-27b-it` |
+| Model ID | `gemma-27b-it` | key AIzaSyBBf5j_WV-q8a5y15tf_T-92reSFU5HNXs
 | Type | Free tier (Gemma) |
 
 ### Rules
@@ -22,11 +26,7 @@
 - ✅ Implement retry logic with exponential backoff
 
 ### Environment Setup
-```dart
-// .env file
-GEMINI_API_KEY=your_api_key_here
-GEMINI_MODEL=gemma-27b-it
-```
+no envs, hardcode the models and the api key for now 
 
 ---
 

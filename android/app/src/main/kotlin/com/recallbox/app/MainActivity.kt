@@ -1,4 +1,4 @@
-package com.example.recallbox
+package com.recallbox.app
 
 import io.flutter.embedding.android.FlutterActivity
 
