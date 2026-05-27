@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Primary brand color - Calm purple/blue for focus and recall
-  static const Color _primaryColor = Color(0xFF6366F1); // Indigo
-  static const Color _secondaryColor = Color(0xFF8B5CF6); // Purple
+  static const Color _primaryColor = Color(0xFF0D9488); // Teal-600
+  static const Color _secondaryColor = Color(0xFF0EA5E9); // Sky-500
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -14,7 +13,7 @@ class AppTheme {
       brightness: Brightness.light,
       secondary: _secondaryColor,
     ),
-    textTheme: GoogleFonts.interTextTheme(),
+    textTheme: GoogleFonts.poppinsTextTheme(),
     cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 0,
@@ -34,7 +33,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+    appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -45,7 +44,7 @@ class AppTheme {
       brightness: Brightness.dark,
       secondary: _secondaryColor,
     ),
-    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
     cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -64,6 +63,6 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+    appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
   );
 }

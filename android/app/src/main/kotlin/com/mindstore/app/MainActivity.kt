@@ -1,4 +1,4 @@
-package com.recallbox.app
+package com.mindstore.app
 
 import io.flutter.embedding.android.FlutterActivity
 

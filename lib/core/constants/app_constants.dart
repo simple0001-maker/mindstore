@@ -1,8 +1,8 @@
 class AppConstants {
   // App Info
-  static const String appName = 'RecallBox';
+  static const String appName = 'MindStore';
   static const String appVersion = '1.0.0';
-  static const String appTagline = 'Store simply. Retrieve naturally.';
+  static const String appTagline = 'Think it. Store it. Find it.';
 
   // AI Configuration
   static const String geminiApiKey = 'AIzaSyBBf5j_WV-q8a5y15tf_T-92reSFU5HNXs';
@@ -17,12 +17,12 @@ class AppConstants {
 
   // Messages
   static const String emptyHistoryMessage =
-      'No notes saved yet.\nStart by saving your first note!';
-  static const String searchPlaceholder = 'Ask anything about your notes...';
-  static const String savePlaceholder = 'Write or paste your note here...';
+      'No notes yet.\nTap the button below to capture your first thought!';
+  static const String searchPlaceholder = 'Search your thoughts...';
+  static const String savePlaceholder = 'Write or paste your thought here...';
 
   // Links
-  static const String privacyPolicyUrl = 'https://recallbox.vercel.app/privacy-policy';
-  static const String termsOfServiceUrl = 'https://recallbox.vercel.app/terms';
-  static const String developerEmail = 'support@recallbox.app';
+  static const String privacyPolicyUrl = 'https://mindstore.app/privacy-policy';
+  static const String termsOfServiceUrl = 'https://mindstore.app/terms';
+  static const String developerEmail = 'support@mindstore.app';
 }

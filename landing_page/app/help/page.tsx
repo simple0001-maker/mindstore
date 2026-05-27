@@ -31,7 +31,7 @@ export default function Help() {
     <main className="min-h-screen bg-white dark:bg-zinc-950">
       <PageHeader
         title="Help Center"
-        description="Find answers, guides, and support for RecallBox."
+        description="Find answers, guides, and support for MindStore."
       />
 
       <section className="py-20">

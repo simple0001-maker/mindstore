@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:recallbox/core/models/note.dart';
-import 'package:recallbox/core/services/storage_service.dart';
+import 'package:mindstore/core/models/note.dart';
+import 'package:mindstore/core/services/storage_service.dart';
 
 class SaveNoteViewModel extends ChangeNotifier {
   final StorageService _storageService;

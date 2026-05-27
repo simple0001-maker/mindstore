@@ -11,11 +11,11 @@ import {
 const FAQS = [
   {
     question: "Do I need to sign up?",
-    answer: "No. RecallBox works right here for this demo."
+    answer: "No. MindStore works right here for this demo."
   },
   {
     question: "Is my data private?",
-    answer: "Yes. RecallBox is designed with a 'Privacy First' approach. The notes you save here are processed locally or ephemeral, ensuring your knowledge stays yours."
+    answer: "Yes. MindStore is designed with a 'Privacy First' approach. The notes you save here are processed locally or ephemeral, ensuring your knowledge stays yours."
   },
   {
     question: "How does the search work?",
@@ -23,11 +23,11 @@ const FAQS = [
   },
   {
     question: "Can I save images or files?",
-    answer: "Currently, RecallBox helps you recall text-based knowledge—facts, procedures, and notes. Image support is on the roadmap."
+    answer: "Currently, MindStore helps you recall text-based knowledge—facts, procedures, and notes. Image support is on the roadmap."
   },
   {
     question: "Is it free?",
-    answer: "Yes, RecallBox is currently free to use."
+    answer: "Yes, MindStore is currently free to use."
   }
 ];
 
@@ -40,7 +40,7 @@ export function FAQ() {
             Frequently Asked <span className="text-brand-500">Questions</span>
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 font-medium font-sans">
-            Everything you need to know about RecallBox.
+            Everything you need to know about MindStore.
           </p>
         </div>
 

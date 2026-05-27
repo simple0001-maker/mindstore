@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/core/models/note.dart';
-import 'package:recallbox/features/history/history_view_model.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/core/models/note.dart';
+import 'package:mindstore/features/history/history_view_model.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});

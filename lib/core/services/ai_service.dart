@@ -1,6 +1,6 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/core/models/note.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/core/models/note.dart';
 
 class AiService {
   late final GenerativeModel _model;

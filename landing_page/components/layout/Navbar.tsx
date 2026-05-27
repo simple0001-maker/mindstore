@@ -39,9 +39,9 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 relative overflow-hidden rounded-xl transition-transform group-hover:scale-110 duration-300">
-              <Image src="/app_logo.png" alt="RecallBox" fill className="object-cover" />
+              <Image src="/app_logo.png" alt="MindStore" fill className="object-cover" />
             </div>
-            <span className="text-2xl font-black text-zinc-900 dark:text-white tracking-tighter">RecallBox</span>
+            <span className="text-2xl font-black text-zinc-900 dark:text-white tracking-tighter">MindStore</span>
           </Link>
 
           {/* Desktop Nav */}

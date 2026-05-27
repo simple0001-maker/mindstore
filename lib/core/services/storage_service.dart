@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/core/models/note.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/core/models/note.dart';
 
 class StorageService {
   late Box<String> _notesBox;

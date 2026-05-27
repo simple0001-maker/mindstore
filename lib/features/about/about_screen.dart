@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -32,7 +32,7 @@ class AboutScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: const Icon(
-                      Icons.inventory_2_rounded,
+                      Icons.psychology_rounded,
                       size: 56,
                       color: Colors.white,
                     ),
@@ -65,11 +65,11 @@ class AboutScreen extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // What is RecallBox
+            // What is MindStore
             _buildSection(
               context,
-              '📦 What is RecallBox?',
-              '''RecallBox is your trusted place for storing and retrieving knowledge. Save notes, facts, and procedures, then find them later using natural language questions.
+              '📦 What is MindStore?',
+              '''MindStore is your trusted place for storing and retrieving knowledge. Save notes, facts, and procedures, then find them later using natural language questions.
 
 No folders. No complex organization. Just memory that answers back.''',
               colorScheme,
@@ -84,7 +84,7 @@ No folders. No complex organization. Just memory that answers back.''',
               '🧠 How It Works',
               '''1. Save anything you want to remember
 2. Ask natural questions like "Where did I save the Wi-Fi setup?"
-3. RecallBox finds the right note instantly
+3. MindStore finds the right note instantly
 
 We use AI to understand your questions, but we never make things up. You only get your own saved content back.''',
               colorScheme,
@@ -113,7 +113,7 @@ Your knowledge is yours alone.''',
             _buildSection(
               context,
               '❌ What We Don\'t Do',
-              '''RecallBox is NOT:
+              '''MindStore is NOT:
 • A document editor
 • A collaboration tool
 • A knowledge base for the internet
@@ -161,7 +161,7 @@ We only retrieve YOUR saved content. No external knowledge, no fabrication, no h
             // Footer
             Center(
               child: Text(
-                '📦✨\n\nRecallBox tries to be right, not smart.\n\nMade with care for people who value their knowledge.',
+                '📦✨\n\nMindStore tries to be right, not smart.\n\nMade with care for people who value their knowledge.',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.6),

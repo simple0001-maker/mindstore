@@ -16,7 +16,7 @@ const steps = [
   {
     icon: <Zap size={24} />,
     title: "3. Instant Recall",
-    description: "RecallBox finds the exact match and highlights the answer. No searching through folders.",
+    description: "MindStore finds the exact match and highlights the answer. No searching through folders.",
   },
 ];
 
@@ -31,7 +31,7 @@ export function HowItWorks() {
               <span className="text-brand-500">answers back.</span>
             </h2>
             <p className="text-lg text-zinc-600 dark:text-zinc-400 font-medium mb-8 leading-relaxed">
-              Stop organizing. Start remembering. RecallBox makes retrieving your knowledge as easy as asking a friend.
+              Stop organizing. Start remembering. MindStore makes retrieving your knowledge as easy as asking a friend.
             </p>
 
             <div className="space-y-8">

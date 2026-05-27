@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:recallbox/core/services/storage_service.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
+import 'package:mindstore/core/services/storage_service.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
 
 class SettingsViewModel extends ChangeNotifier {
   final StorageService _storageService;

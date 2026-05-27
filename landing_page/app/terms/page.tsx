@@ -19,7 +19,7 @@ export default function Terms() {
 
               <div className="prose dark:prose-invert prose-zinc prose-lg max-w-none font-sans">
                 <p className="lead text-xl text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed mb-12">
-                  These Terms of Service constitute a legally binding agreement between you and RecallBox concerning your access to and use of the Service.
+                  These Terms of Service constitute a legally binding agreement between you and MindStore concerning your access to and use of the Service.
                 </p>
 
                 <div className="grid gap-12">
@@ -52,12 +52,12 @@ export default function Terms() {
                     </h2>
                     <div className="bg-zinc-50 dark:bg-zinc-950/50 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 mb-6">
                       <p className="mb-0 font-medium">
-                        You retain full ownership of all notes, data, procedures, and text you upload to RecallBox.
+                        You retain full ownership of all notes, data, procedures, and text you upload to MindStore.
                         We claim no intellectual property rights over the material you provide.
                       </p>
                     </div>
                     <p>
-                      By uploading User Content to RecallBox, you grant us a license to store and display your User Content strictly as necessary to provide the Service to you.
+                      By uploading User Content to MindStore, you grant us a license to store and display your User Content strictly as necessary to provide the Service to you.
                     </p>
                   </div>
 
@@ -92,8 +92,8 @@ export default function Terms() {
                     <p>
                       In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:
                     </p>
-                    <a href="mailto:support@recallbox.app" className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold no-underline hover:underline">
-                      support@recallbox.app
+                    <a href="mailto:support@mindstore.app" className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold no-underline hover:underline">
+                      support@mindstore.app
                     </a>
                   </div>
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/features/settings/settings_view_model.dart';
-import 'package:recallbox/features/about/about_screen.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/features/settings/settings_view_model.dart';
+import 'package:mindstore/features/about/about_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -73,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSectionHeader(context, 'About'),
               ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('About RecallBox'),
+                title: const Text('About MindStore'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.push(

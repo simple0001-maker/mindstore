@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recallbox/core/theme/app_theme.dart';
-import 'package:recallbox/core/services/storage_service.dart';
-import 'package:recallbox/core/services/ai_service.dart';
-import 'package:recallbox/features/home/home_screen.dart';
-import 'package:recallbox/features/home/home_view_model.dart';
-import 'package:recallbox/features/save_note/save_note_view_model.dart';
-import 'package:recallbox/features/history/history_view_model.dart';
-import 'package:recallbox/features/settings/settings_view_model.dart';
+import 'package:mindstore/core/theme/app_theme.dart';
+import 'package:mindstore/core/services/storage_service.dart';
+import 'package:mindstore/core/services/ai_service.dart';
+import 'package:mindstore/features/home/home_screen.dart';
+import 'package:mindstore/features/home/home_view_model.dart';
+import 'package:mindstore/features/save_note/save_note_view_model.dart';
+import 'package:mindstore/features/history/history_view_model.dart';
+import 'package:mindstore/features/settings/settings_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,14 +18,14 @@ void main() async {
 
   final aiService = AiService();
 
-  runApp(RecallBoxApp(storageService: storageService, aiService: aiService));
+  runApp(MindStoreApp(storageService: storageService, aiService: aiService));
 }
 
-class RecallBoxApp extends StatelessWidget {
+class MindStoreApp extends StatelessWidget {
   final StorageService storageService;
   final AiService aiService;
 
-  const RecallBoxApp({
+  const MindStoreApp({
     super.key,
     required this.storageService,
     required this.aiService,
@@ -59,7 +59,7 @@ class RecallBoxApp extends StatelessWidget {
           });
 
           return MaterialApp(
-            title: 'RecallBox',
+            title: 'MindStore',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

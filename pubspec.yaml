@@ -1,5 +1,5 @@
-name: recallbox
-description: "Store simply. Retrieve naturally. RecallBox helps you save notes, facts, and procedures, then find them using natural language."
+name: mindstore
+description: "Think it. Store it. Find it. MindStore helps you capture thoughts, notes, and ideas, then find them using natural language."
 publish_to: 'none'
 
 # The following defines the version and build number for your application.
@@ -66,16 +66,16 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/app_logo.png"
-  adaptive_icon_background: "#6366F1"
+  adaptive_icon_background: "#0D9488"
   adaptive_icon_foreground: "assets/app_logo.png"
   remove_alpha_ios: true
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#6366F1"
+  color: "#0D9488"
   image: "assets/app_logo.png"
   android_12:
-    color: "#6366F1"
+    color: "#0D9488"
     image: "assets/app_logo.png"
   ios: true
   web: false

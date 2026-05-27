@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/core/models/note.dart';
-import 'package:recallbox/features/home/home_view_model.dart';
-import 'package:recallbox/features/save_note/save_note_screen.dart';
-import 'package:recallbox/features/history/history_screen.dart';
-import 'package:recallbox/features/settings/settings_screen.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/core/models/note.dart';
+import 'package:mindstore/features/home/home_view_model.dart';
+import 'package:mindstore/features/save_note/save_note_screen.dart';
+import 'package:mindstore/features/history/history_screen.dart';
+import 'package:mindstore/features/settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,12 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => const SaveNoteScreen(),
                   ),
                 ).then((_) {
-                  // Refresh after saving
                   context.read<HomeViewModel>().loadRecentNotes();
                 });
               },
               icon: const Icon(Icons.add),
-              label: const Text('New Note'),
+              label: const Text('Capture Thought'),
             )
           : null,
     );
@@ -102,25 +101,57 @@ class _HomeScreenState extends State<HomeScreen> {
           slivers: [
             // App Bar
             SliverAppBar.large(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppConstants.appName,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+              expandedHeight: 160,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.secondary,
+                      ],
                     ),
                   ),
-                  Text(
-                    AppConstants.appTagline,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.psychology_rounded,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                AppConstants.appName,
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            AppConstants.appTagline,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.white.withOpacity(0.85),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
+                ),
               ),
-              expandedHeight: 140,
             ),
 
             // Search Bar
@@ -170,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: Text(
                           viewModel.isSearching
                               ? 'Searching...'
-                              : 'Ask RecallBox',
+                              : 'Ask MindStore',
                         ),
                       ),
                     ),
@@ -225,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Recent Notes',
+                        'Recent Thoughts',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -251,9 +282,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.inbox_outlined,
-                        size: 64,
-                        color: colorScheme.onSurface.withOpacity(0.3),
+                        Icons.psychology_outlined,
+                        size: 72,
+                        color: colorScheme.primary.withOpacity(0.35),
                       ),
                       const SizedBox(height: 16),
                       Text(

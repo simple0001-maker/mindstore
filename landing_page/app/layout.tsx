@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RecallBox - Store Simply. Retrieve Naturally.",
-  description: "RecallBox stores your notes, facts, and procedures and helps you find them later using natural language. The one trusted place for your memory.",
+  title: "MindStore - Think it. Store it. Find it.",
+  description: "MindStore helps you capture thoughts, notes, and ideas, then find them instantly using natural language. Your personal knowledge vault.",
   icons: {
     icon: "/favicon.ico",
   },

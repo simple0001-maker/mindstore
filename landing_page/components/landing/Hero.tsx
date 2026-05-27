@@ -64,7 +64,7 @@ export function Hero() {
             transition={{ delay: 0.2 }}
             className="text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-medium"
           >
-            RecallBox stores your notes, facts, and procedures and helps you find them later by just asking. No folders, just memory.
+            MindStore stores your notes, facts, and procedures and helps you find them later by just asking. No folders, just memory.
           </motion.p>
         </div>
 
@@ -100,7 +100,7 @@ export function Hero() {
               )}
             >
               <Search size={16} />
-              Ask RecallBox
+              Ask MindStore
             </button>
           </div>
 

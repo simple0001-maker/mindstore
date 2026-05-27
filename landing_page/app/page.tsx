@@ -41,7 +41,7 @@ export default function Home() {
             Stop searching. <br /><span className="text-brand-500">Start recalling.</span>
           </h2>
           <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto font-medium">
-            RecallBox is the one trusted place for your memory.
+            MindStore is the one trusted place for your memory.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link
@@ -49,7 +49,7 @@ export default function Home() {
               className="inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-zinc-950 bg-white rounded-2xl hover:bg-zinc-100 transition-all shadow-2xl hover:scale-105 active:scale-95"
             >
               <Sparkles className="mr-3 fill-current text-brand-500" size={24} />
-              Try RecallBox
+              Try MindStore
             </Link>
           </div>
           <p className="mt-8 text-xs text-zinc-500 font-bold tracking-[0.2em] uppercase">

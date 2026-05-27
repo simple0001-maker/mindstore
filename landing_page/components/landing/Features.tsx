@@ -16,7 +16,7 @@ const features = [
   {
     icon: <Brain size={24} />,
     title: "Smart Context",
-    description: "RecallBox understands the meaning behind your notes, not just the text matches.",
+    description: "MindStore understands the meaning behind your notes, not just the text matches.",
   },
   {
     icon: <Shield size={24} />,
@@ -44,7 +44,7 @@ export function Features() {
             Your second brain. <span className="text-brand-500">Simplified.</span>
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 font-medium">
-            RecallBox is built on the core principle: Store simply, retrieve naturally.
+            MindStore is built on the core principle: Store simply, retrieve naturally.
           </p>
         </div>
 

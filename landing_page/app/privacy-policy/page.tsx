@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
 
               <div className="prose dark:prose-invert prose-zinc prose-lg max-w-none font-sans">
                 <p className="lead text-xl text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed mb-12">
-                  At RecallBox ("we," "our," or "us"), we recognize that your personal memory and knowledge are among your most private assets.
+                  At MindStore ("we," "our," or "us"), we recognize that your personal memory and knowledge are among your most private assets.
                   We are committed to protecting your privacy and ensuring you have complete control over your data.
                 </p>
 
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
                     </h2>
                     <div className="bg-brand-50 dark:bg-brand-900/10 p-6 rounded-2xl border border-brand-100 dark:border-brand-800/30 mb-6">
                       <p className="mb-0 font-medium text-brand-900 dark:text-brand-100">
-                        RecallBox is designed as a secure vault for your personal knowledge. Unlike many AI services, <strong>we do not use your private notes,
+                        MindStore is designed as a secure vault for your personal knowledge. Unlike many AI services, <strong>we do not use your private notes,
                           documents, or procedures to train our public advertising or generative AI models.</strong> Your data remains yours.
                       </p>
                     </div>
@@ -104,8 +104,8 @@ export default function PrivacyPolicy() {
                     <p>
                       If you have questions about this Privacy Policy, please contact us at:
                     </p>
-                    <a href="mailto:support@recallbox.app" className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold no-underline hover:underline">
-                      support@recallbox.app
+                    <a href="mailto:support@mindstore.app" className="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold no-underline hover:underline">
+                      support@mindstore.app
                     </a>
                   </div>
 

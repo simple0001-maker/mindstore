@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recallbox/core/constants/app_constants.dart';
-import 'package:recallbox/features/save_note/save_note_view_model.dart';
+import 'package:mindstore/core/constants/app_constants.dart';
+import 'package:mindstore/features/save_note/save_note_view_model.dart';
 
 class SaveNoteScreen extends StatefulWidget {
   const SaveNoteScreen({super.key});
@@ -71,7 +71,7 @@ class _SaveNoteScreenState extends State<SaveNoteScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Save facts, procedures, or notes. RecallBox will help you find them later.',
+                              'Save thoughts, ideas, and procedures. MindStore will help you find them later.',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onPrimaryContainer,
                               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:recallbox/core/models/note.dart';
-import 'package:recallbox/core/services/ai_service.dart';
-import 'package:recallbox/core/services/storage_service.dart';
+import 'package:mindstore/core/models/note.dart';
+import 'package:mindstore/core/services/ai_service.dart';
+import 'package:mindstore/core/services/storage_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final StorageService _storageService;
