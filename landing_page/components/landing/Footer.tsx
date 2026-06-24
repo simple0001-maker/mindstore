@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Twitter, Github, Mail } from "lucide-react";
+import { Share2, Globe, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -60,10 +60,10 @@ export function Footer() {
             </h4>
             <div className="flex items-center gap-4">
               <Link href="#" className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-brand-600 hover:text-white transition-all">
-                <Twitter size={18} />
+                <Share2 size={18} />
               </Link>
               <Link href="#" className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 transition-all">
-                <Github size={18} />
+                <Globe size={18} />
               </Link>
               <Link href="mailto:support@mindstore.app" className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-brand-600 hover:text-white transition-all">
                 <Mail size={18} />
