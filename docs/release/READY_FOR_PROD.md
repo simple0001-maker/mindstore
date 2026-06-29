@@ -1,18 +1,18 @@
-# RecallBox is Ready for Production! 🚀
+# MindStore is Ready for Production! 🚀
 
-We have successfully completed the production checklist and prepared RecallBox for the Google Play Store.
+We have successfully completed the production checklist and prepared MindStore for the Google Play Store.
 
 ## ✅ Completed Steps
 
 ### 1. Branding & Identity
-- **App Name**: Updated to "RecallBox" (Android & iOS)
-- **Package Name**: Updated to `com.recallbox.app`
+- **App Name**: Updated to "MindStore" (Android & iOS)
+- **Package Name**: Updated to `com.mindstore.app`
 - **App Icon**: Generated specific custom icon (Brain in a box)
 - **Splash Screen**: Configured native splash screen
 
 ### 2. Signing & Security
-- **Keystore**: Generated `recallbox-release.jks`
-- **Key Properties**: Configured securely in `key.properties`
+- **Keystore**: Generated `mindstore-release.jks`
+- **Key Properties**: Configured securely in `android/key.properties` (not committed to git)
 - **Build Config**: Updated `build.gradle.kts` with release signing
 - **ProGuard**: Added rules to protect code shrinking
 
@@ -21,40 +21,44 @@ We have successfully completed the production checklist and prepared RecallBox f
 - **Privacy Policy**: Created `docs/release/privacy_policy.md`
 - **Credentials**: Documented in `docs/release/README.md`
 - **Graphics**:
-  - Feature Graphic generated: `docs/release/featured_graphic_recallbox.png`
-  - Screenshots folder created: `docs/release/screenshots/` (You need to add actual screenshots here)
+  - Feature Graphic: `docs/release/featured_graphic_mindstore.png`
+  - Screenshots folder: `docs/release/screenshots/` (add actual screenshots here)
 
 ### 4. Technical Configuration
-- **Permissions**: Added `INTERNET` permission (Android)
+- **Permissions**: Added `INTERNET` permission (Android) — used for Google Fonts and external links only; search is fully on-device
 - **iOS Config**: Updated Bundle ID and Display Name in `Info.plist` and `project.pbxproj`
 - **Dependencies**: All production dependencies added and configured
 
 ## 📂 Deliverables Location
 
 All release assets are in `docs/release/`:
-- `recallbox-release.jks`: Your signing key (BACK THIS UP!)
+- `featured_graphic_mindstore.png`: Play Store featured graphic
 - `play_store_listing.md`: Copy/paste content for Play Store
 - `privacy_policy.md`: Text for your website
-- `README.md`: Critical credential information
+- `README.md`: Credential reference (passwords stored separately in password manager)
 
-## 🚀 Next Steps for You
+## 🚀 Next Steps
 
-1. **Wait for Build**: The `flutter build appbundle` command is running. Once finished, the file will be at:
-   `build/app/outputs/bundle/release/app-release.aab`
+1. **Build release bundle**:
+   ```
+   flutter build appbundle --release
+   ```
+   Output: `build/app/outputs/bundle/release/app-release.aab`
 
 2. **Google Play Console**:
-   - Create an app named "RecallBox"
+   - Create an app named "MindStore"
    - Upload the `.aab` file
    - Copy descriptions from `play_store_listing.md`
+   - Fill out the Data Safety form (no data collected, no third-party sharing)
    - Set privacy policy URL to your hosted page
 
 3. **Privacy Policy Hosting**:
-   - You need to host the content of `privacy_policy.md` at `https://recallbox.app/privacy-policy` (or your actual domain)
+   - Host the content of `privacy_policy.md` at `https://mindstore.app/privacy-policy`
 
 ## ⚠️ Critical Reminder
 
-**Save `docs/release/recallbox-release.jks` and `android/key.properties` in a safe, private place.**
-If you lose these, you will NEVER be able to update your app on the Play Store again.
+**Keep `android/key.properties` and `mindstore-release.jks` in a safe, private place — backed up outside this repo.**
+If you lose the keystore, you will NEVER be able to update your app on the Play Store again.
 
 ---
-*RecallBox is ready to help the world remember!* 🧠📦
+*MindStore is ready to help the world remember!* 🧠📦

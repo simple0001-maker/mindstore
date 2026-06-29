@@ -7,7 +7,7 @@
 ## Android Signing Credentials
 
 ### Keystore Information
-- **File**: `recallbox-release.jks`
+- **File**: `mindstore-release.jks`
 - **Alias**: `recallbox`
 - **Store Password**: `[redacted — store in a password manager]`
 - **Key Password**: `[redacted — store in a password manager]`
@@ -37,13 +37,13 @@ C=NG
 ## File Locations
 
 ### Keystore Files
-- Production keystore: `docs/release/recallbox-release.jks`
-- Android app keystore: `android/app/recallbox-release.jks`
+- Production keystore: `docs/release/mindstore-release.jks`
+- Android app keystore: `android/app/mindstore-release.jks`
 - Key properties: `android/key.properties`
 
 ### Important: Backup
 Make sure to back up these files to a secure location:
-1. `recallbox-release.jks`
+1. `mindstore-release.jks`
 2. `key.properties` 
 3. This README file
 
