@@ -15,7 +15,7 @@
 | Setting | Value |
 |---------|-------|
 | Provider | Google Gemini |
-| Model ID | `gemma-27b-it` | key AIzaSyBBf5j_WV-q8a5y15tf_T-92reSFU5HNXs
+| Model ID | `gemma-27b-it` |
 | Type | Free tier (Gemma) |
 
 ### Rules
@@ -26,7 +26,7 @@
 - ✅ Implement retry logic with exponential backoff
 
 ### Environment Setup
-no envs, hardcode the models and the api key for now 
+Store the API key using `--dart-define` at build time or `flutter_dotenv`. Never hardcode keys in source code or commit them to version control.
 
 ---
 

@@ -22,10 +22,6 @@ class StorageService {
     await _notesBox.delete(noteId);
   }
 
-  Future<void> updateNote(Note note) async {
-    await saveNote(note);
-  }
-
   List<Note> getAllNotes() {
     final notes = <Note>[];
     for (var key in _notesBox.keys) {
@@ -43,19 +39,6 @@ class StorageService {
     // Sort by most recent first
     notes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return notes;
-  }
-
-  Note? getNoteById(String id) {
-    try {
-      final jsonStr = _notesBox.get(id);
-      if (jsonStr != null) {
-        final json = jsonDecode(jsonStr) as Map<String, dynamic>;
-        return Note.fromJson(json);
-      }
-    } catch (e) {
-      return null;
-    }
-    return null;
   }
 
   Future<void> clearAllNotes() async {
@@ -90,28 +73,6 @@ class StorageService {
     return jsonEncode(jsonList);
   }
 
-  // Import notes from JSON
-  Future<int> importNotesFromJson(String jsonString) async {
-    try {
-      final jsonList = jsonDecode(jsonString) as List;
-      int importedCount = 0;
-
-      for (var item in jsonList) {
-        try {
-          final note = Note.fromJson(item as Map<String, dynamic>);
-          await saveNote(note);
-          importedCount++;
-        } catch (e) {
-          // Skip invalid notes
-          continue;
-        }
-      }
-
-      return importedCount;
-    } catch (e) {
-      throw StorageException('Failed to import notes: ${e.toString()}');
-    }
-  }
 }
 
 class StorageException implements Exception {

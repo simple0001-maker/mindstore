@@ -1,10 +1,10 @@
-# RecallBox Privacy Policy
+# MindStore Privacy Policy
 
 **Last Updated**: January 27, 2026
 
 ## Our Commitment
 
-RecallBox is built with privacy as the foundation. We believe your personal knowledge is yours alone.
+MindStore is built with privacy as the foundation. We believe your personal knowledge is yours alone.
 
 ## Data Collection: NONE
 
@@ -31,14 +31,6 @@ All your notes and data are stored exclusively on YOUR device using local storag
 
 ## Third-Party Services
 
-### Google Gemini AI
-When you search your notes, your query and the relevant note context are sent to Google's Gemini API to process the search. However:
-- Only YOUR saved notes are included in the search context
-- No user identification is sent
-- Google's AI processes the request and returns results
-- We do not store or access these API calls
-- Refer to [Google's Privacy Policy](https://policies.google.com/privacy) for their data handling
-
 ### Google Fonts
 We use Google Fonts to display text. This may load fonts from Google's servers, which is standard practice and subject to [Google's Privacy Policy](https://policies.google.com/privacy).
 
@@ -46,9 +38,10 @@ We use Google Fonts to display text. This may load fonts from Google's servers, 
 
 ### Internet Permission
 Required to:
-- Access Google Gemini AI for search functionality
 - Load Google Fonts
 - Open external links (Privacy Policy, Support)
+
+Note: Search is performed entirely on-device — no internet connection is required for search functionality.
 
 We do NOT use internet permission for:
 - Tracking
@@ -66,7 +59,7 @@ Since we don't collect any data, there's nothing to:
 
 ## Children's Privacy
 
-RecallBox does not knowingly collect data from anyone, including children under 13. Since we collect no data at all, the app is safe for all ages.
+MindStore does not knowingly collect data from anyone, including children under 13. Since we collect no data at all, the app is safe for all ages.
 
 ## Data Security
 
@@ -78,7 +71,7 @@ If we ever change our privacy practices, we will update this policy and notify u
 
 ## What Happens If You Uninstall
 
-When you uninstall RecallBox, all your local data is removed from your device per Android/iOS standard practices. This data is NOT recoverable.
+When you uninstall MindStore, all your local data is removed from your device per Android/iOS standard practices. This data is NOT recoverable.
 
 ## Export Your Data
 
@@ -88,8 +81,8 @@ You can export all your notes as JSON at any time from the Settings screen. This
 
 If you have questions about this Privacy Policy:
 
-**Email**: support@recallbox.app  
-**Website**: https://recallbox.app
+**Email**: support@mindstore.app  
+**Website**: https://mindstore.app
 
 ## Summary
 
@@ -98,8 +91,8 @@ If you have questions about this Privacy Policy:
 **Who we share with**: No one  
 **Your control**: Complete
 
-RecallBox exists to serve you, not to harvest your data.
+MindStore exists to serve you, not to harvest your data.
 
 ---
 
-© 2026 RecallBox. All rights reserved.
+© 2026 MindStore. All rights reserved.

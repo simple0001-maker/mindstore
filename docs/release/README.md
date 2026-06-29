@@ -9,8 +9,8 @@
 ### Keystore Information
 - **File**: `recallbox-release.jks`
 - **Alias**: `recallbox`
-- **Store Password**: `recallbox123`
-- **Key Password**: `recallbox123`
+- **Store Password**: `[redacted — store in a password manager]`
+- **Key Password**: `[redacted — store in a password manager]`
 - **validity**: 10,000 days (expires ~2053)
 - **Algorithm**: RSA 2048-bit
 

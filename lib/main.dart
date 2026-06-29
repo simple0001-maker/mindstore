@@ -48,16 +48,11 @@ class MindStoreApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => HistoryViewModel(storageService)),
         ChangeNotifierProvider(
-          create: (_) => SettingsViewModel(storageService),
+          create: (_) => SettingsViewModel(storageService)..init(),
         ),
       ],
       child: Consumer<SettingsViewModel>(
         builder: (context, settingsViewModel, child) {
-          // Initialize settings viewmodel
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            settingsViewModel.init();
-          });
-
           return MaterialApp(
             title: 'MindStore',
             debugShowCheckedModeBanner: false,

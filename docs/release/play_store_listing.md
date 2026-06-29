@@ -1,8 +1,8 @@
-# RecallBox - Play Store Listing
+# MindStore - Play Store Listing
 
 ## App Information
-- **App Name**: RecallBox
-- **Package Name**: com.recallbox.app
+- **App Name**: MindStore
+- **Package Name**: com.mindstore.app
 - **Category**: Productivity
 - **Content Rating**: Everyone
 - **Version**: 1.0.0
@@ -12,18 +12,18 @@
 ## Short Description
 **(Max 80 characters)**
 
-Store notes naturally. Find them instantly with AI-powered recall.
+Store notes naturally. Find them instantly with on-device search.
 
 ---
 
 ## Full Description
 **(Max 4000 characters)**
 
-**RecallBox: Your Trusted Memory Assistant**
+**MindStore: Your Trusted Memory Assistant**
 
 Store simply. Retrieve naturally.
 
-RecallBox is your personal knowledge vault that remembers so you don't have to. Save notes, facts, procedures, and important information, then find them later using natural language questions.
+MindStore is your personal knowledge vault that remembers so you don't have to. Save notes, facts, procedures, and important information, then find them later by searching with keywords.
 
 **🎯 The Problem We Solve**
 
@@ -32,13 +32,13 @@ Ever saved something important and couldn't find it later?
 - "What was that server password location?"
 - "How do I reset the router again?"
 
-Stop searching through scattered apps and folders. RecallBox keeps everything in one trusted place.
+Stop searching through scattered apps and folders. MindStore keeps everything in one trusted place.
 
 **✨ How It Works**
 
 1. **Save Anything**: Facts, procedures, passwords locations, setup guides
 2. **Ask Naturally**: "Where did I save the Wi-Fi setup?" or "Show me the API key note"
-3. **Get Results Instantly**: AI finds the exact note you need
+3. **Get Results Instantly**: On-device search finds the exact note you need
 
 **🔒 Privacy First**
 
@@ -50,9 +50,9 @@ Stop searching through scattered apps and folders. RecallBox keeps everything in
 
 Your knowledge is yours alone.
 
-**🧠 Powered by AI, Grounded in Truth**
+**🔍 Fast, Honest Search**
 
-We use Google's Gemini AI to understand your questions, but we NEVER make things up. You only get YOUR saved content back - no hallucinations, no external knowledge, just pure recall.
+MindStore searches your notes instantly using on-device keyword matching. You only get YOUR saved content back — no hallucinations, no external knowledge, just pure recall.
 
 **💡 Perfect For**
 
@@ -63,7 +63,7 @@ We use Google's Gemini AI to understand your questions, but we NEVER make things
 
 **🎨 Features**
 
-- Natural language search
+- Keyword search (on-device)
 - Simple note saving
 - Tags and titles (optional)
 - Dark mode support
@@ -71,7 +71,7 @@ We use Google's Gemini AI to understand your questions, but we NEVER make things
 - Export your data anytime
 - No ads, ever
 
-**📦 What RecallBox Is NOT**
+**📦 What MindStore Is NOT**
 
 - Not a document editor
 - Not a collaboration tool
@@ -80,12 +80,12 @@ We use Google's Gemini AI to understand your questions, but we NEVER make things
 
 **⚡ Get Started**
 
-1. Download RecallBox
+1. Download MindStore
 2. Save your first note
 3. Ask a question
 4. Be amazed at how easy recall can be
 
-RecallBox tries to be right, not smart. 📦✨
+MindStore tries to be right, not smart. 📦✨
 
 ---
 
@@ -97,19 +97,19 @@ RecallBox tries to be right, not smart. 📦✨
 ---
 
 ## Tags / Keywords
-recallbox, notes, recall, memory, knowledge base, AI search, note taking, personal wiki, knowledge management, productivity, offline notes, private notes, local storage, smart notes, intelligent search
+mindstore, notes, recall, memory, knowledge base, note taking, personal wiki, knowledge management, productivity, offline notes, private notes, local storage, smart notes, keyword search, on-device search
 
 ---
 
 ## Privacy Policy URL
-https://recallbox.app/privacy-policy
+https://mindstore.app/privacy-policy
 
 (Note: Create this page before submission)
 
 ---
 
 ## Support Contact
-support@recallbox.app
+support@mindstore.app
 
 ---
 
@@ -117,15 +117,15 @@ support@recallbox.app
 
 ### Screenshot 1: Home Screen
 **Title**: Ask. Recall. Done.
-**Description**: Search your notes using natural language. No keywords, no complex queries.
+**Description**: Search your notes by typing what you remember. Fast on-device keyword matching.
 
 ### Screenshot 2: Save Note
 **Title**: Save Anything Important
 **Description**: Quickly save facts, procedures, and notes. Optional titles make organization effortless.
 
 ### Screenshot 3: Search Results
-**Title**: Instant AI-Powered Recall
-**Description**: Find exactly what you saved with intelligent AI search that never hallucinates.
+**Title**: Instant On-Device Recall
+**Description**: Find exactly what you saved with fast keyword search. Results come only from your own notes.
 
 ### Screenshot 4: History
 **Title**: All Your Notes in One Place
@@ -144,7 +144,7 @@ support@recallbox.app
 ## Feature Graphic Text
 **(1024 x 500 banner)**
 
-Main Text: "RecallBox"
+Main Text: "MindStore"
 Subtitle: "Store Simply. Retrieve Naturally."
 Visual: Brain in a box icon with purple gradient
 
@@ -153,20 +153,20 @@ Visual: Brain in a box icon with purple gradient
 ## Promotional Text
 **(Max 170 characters - appears at top of listing)**
 
-Never forget where you saved important information. RecallBox uses AI to help you recall your notes using natural language questions.
+Never forget where you saved important information. MindStore uses fast on-device search to help you recall your notes instantly.
 
 ---
 
 ## What's New (Version 1.0.0)
 
-🎉 Welcome to RecallBox!
+🎉 Welcome to MindStore!
 
 • Save notes, facts, and procedures effortlessly
-• Find anything with natural language search
+• Find anything with instant on-device search
 • Privacy-first: all data stays on your device
 • Beautiful, clean interface with dark mode
 • Export your data anytime
-• Powered by Google Gemini AI
+• Instant on-device keyword search
 
 Your personal memory assistant is here! 📦✨
 

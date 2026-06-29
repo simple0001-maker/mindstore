@@ -48,7 +48,7 @@ class AboutScreen extends StatelessWidget {
                   Text(
                     AppConstants.appTagline,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.7),
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -56,7 +56,7 @@ class AboutScreen extends StatelessWidget {
                   Text(
                     'Version ${AppConstants.appVersion}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -83,10 +83,10 @@ No folders. No complex organization. Just memory that answers back.''',
               context,
               '🧠 How It Works',
               '''1. Save anything you want to remember
-2. Ask natural questions like "Where did I save the Wi-Fi setup?"
-3. MindStore finds the right note instantly
+2. Ask questions like "Where did I save the Wi-Fi setup?"
+3. MindStore searches your notes instantly using keyword matching
 
-We use AI to understand your questions, but we never make things up. You only get your own saved content back.''',
+Search runs entirely on your device — no network calls, no servers, no waiting.''',
               colorScheme,
               theme,
             ),
@@ -125,14 +125,14 @@ We only retrieve YOUR saved content. No external knowledge, no fabrication, no h
 
             const SizedBox(height: 40),
 
-            // Powered By
+            // Search technology badge
             Center(
               child: Column(
                 children: [
                   Text(
-                    'Powered by',
+                    'Search powered by',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -146,7 +146,7 @@ We only retrieve YOUR saved content. No external knowledge, no fabrication, no h
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Google Gemini AI',
+                      'On-Device Keyword Search',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -164,7 +164,7 @@ We only retrieve YOUR saved content. No external knowledge, no fabrication, no h
                 '📦✨\n\nMindStore tries to be right, not smart.\n\nMade with care for people who value their knowledge.',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                   height: 1.6,
                 ),
               ),

@@ -4,10 +4,6 @@ class AppConstants {
   static const String appVersion = '1.0.0';
   static const String appTagline = 'Think it. Store it. Find it.';
 
-  // AI Configuration
-  static const String geminiApiKey = 'AIzaSyBBf5j_WV-q8a5y15tf_T-92reSFU5HNXs';
-  static const String geminiModel = 'gemma-2-27b-it';
-
   // Hive Box Names
   static const String notesBoxName = 'notes';
   static const String settingsBoxName = 'settings';

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mindstore/core/constants/app_constants.dart';
 import 'package:mindstore/core/models/note.dart';
+import 'package:mindstore/core/utils/date_formatter.dart';
 import 'package:mindstore/features/home/home_view_model.dart';
+import 'package:mindstore/features/history/history_view_model.dart';
 import 'package:mindstore/features/save_note/save_note_screen.dart';
 import 'package:mindstore/features/history/history_screen.dart';
 import 'package:mindstore/features/settings/settings_screen.dart';
@@ -37,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // Different screens for bottom nav
     final screens = [
       _buildHomeContent(context, theme, colorScheme),
       const HistoryScreen(),
@@ -45,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      body: screens[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: screens,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
@@ -80,7 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => const SaveNoteScreen(),
                   ),
                 ).then((_) {
+                  if (!mounted) return;
                   context.read<HomeViewModel>().loadRecentNotes();
+                  context.read<HistoryViewModel>().loadNotes();
                 });
               },
               icon: const Icon(Icons.add),
@@ -143,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             AppConstants.appTagline,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.white.withOpacity(0.85),
+                              color: Colors.white.withValues(alpha: 0.85),
                             ),
                           ),
                         ],
@@ -175,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                             : null,
                       ),
+                      onChanged: (_) => setState(() {}),
                       onSubmitted: (value) {
                         viewModel.searchNotes(value);
                       },
@@ -264,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         '${viewModel.getNotesCount()} total',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -284,14 +291,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       Icon(
                         Icons.psychology_outlined,
                         size: 72,
-                        color: colorScheme.primary.withOpacity(0.35),
+                        color: colorScheme.primary.withValues(alpha: 0.35),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         AppConstants.emptyHistoryMessage,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -335,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Icon(
                 Icons.search_off,
-                color: colorScheme.onSurface.withOpacity(0.5),
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -426,9 +433,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                _formatDate(note.createdAt),
+                DateFormatter.format(note.createdAt),
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -436,20 +443,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays == 0) {
-      return 'Today';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
   }
 }

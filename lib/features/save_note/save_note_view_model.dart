@@ -25,8 +25,9 @@ class SaveNoteViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final now = DateTime.now();
       final note = Note(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: '${now.microsecondsSinceEpoch}_${now.microsecond}',
         content: content.trim(),
         title: title?.trim().isEmpty == true ? null : title?.trim(),
         createdAt: DateTime.now(),

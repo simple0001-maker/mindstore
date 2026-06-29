@@ -35,10 +35,6 @@ class SettingsViewModel extends ChangeNotifier {
     return _storageService.exportNotesAsJson();
   }
 
-  Future<int> importNotes(String jsonString) async {
-    return await _storageService.importNotesFromJson(jsonString);
-  }
-
   Future<void> clearAllData() async {
     await _storageService.clearAllNotes();
     await _storageService.clearAllSettings();

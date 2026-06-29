@@ -35,20 +35,4 @@ class Note {
     );
   }
 
-  // Create a copy with updated fields
-  Note copyWith({
-    String? id,
-    String? content,
-    String? title,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return Note(
-      id: id ?? this.id,
-      content: content ?? this.content,
-      title: title ?? this.title,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

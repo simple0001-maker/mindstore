@@ -59,7 +59,7 @@ class _SaveNoteScreenState extends State<SaveNoteScreen> {
                 children: [
                   // Info card
                   Card(
-                    color: colorScheme.primaryContainer.withOpacity(0.5),
+                    color: colorScheme.primaryContainer.withValues(alpha: 0.5),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
