@@ -30,7 +30,7 @@ C=NG
 
 - **Package Name**: `com.mindstore.app`
 - **App Name**: MindStore
-- **Version**: 1.0.0+1
+- **Version**: 1.0.1+2
 
 ---
 

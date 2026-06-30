@@ -5,7 +5,7 @@
 - **Package Name**: com.mindstore.app
 - **Category**: Productivity
 - **Content Rating**: Everyone
-- **Version**: 1.0.0
+- **Version**: 1.0.1
 
 ---
 
@@ -157,18 +157,17 @@ Never forget where you saved important information. MindStore uses fast on-devic
 
 ---
 
-## What's New (Version 1.0.0)
+## What's New (Version 1.0.1)
 
 🎉 Welcome to MindStore!
 
 • Save notes, facts, and procedures effortlessly
-• Find anything with instant on-device search
-• Privacy-first: all data stays on your device
+• Find anything with instant on-device keyword search
+• Privacy-first: all data stays on your device — no cloud, no tracking
 • Beautiful, clean interface with dark mode
 • Export your data anytime
-• Instant on-device keyword search
 
-Your personal memory assistant is here! 📦✨
+Your personal knowledge vault is here! 📦✨
 
 ---
 
