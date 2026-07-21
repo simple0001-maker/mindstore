@@ -1,7 +1,7 @@
 class AppConstants {
   // App Info
   static const String appName = 'MindStore';
-  static const String appVersion = '1.0.1';
+  static const String appVersion = '1.0.2';
   static const String appTagline = 'Think it. Store it. Find it.';
 
   // Hive Box Names

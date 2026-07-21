@@ -191,7 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: viewModel.isSearching
+                        onPressed: viewModel.isSearching ||
+                                _searchController.text.trim().isEmpty
                             ? null
                             : () {
                                 viewModel.searchNotes(_searchController.text);
@@ -314,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final note = viewModel.recentNotes[index];
-                    return _buildNoteCard(note, colorScheme, theme);
+                    return _buildNoteCard(context, note, colorScheme, theme);
                   }, childCount: viewModel.recentNotes.length),
                 ),
               ),
@@ -401,12 +402,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNoteCard(Note note, ColorScheme colorScheme, ThemeData theme) {
+  Widget _buildNoteCard(
+    BuildContext context,
+    Note note,
+    ColorScheme colorScheme,
+    ThemeData theme,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to note detail
+          _showNoteDetail(context, note, theme, colorScheme);
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -442,6 +448,71 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showNoteDetail(
+    BuildContext context,
+    Note note,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          note.title ?? 'Note',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    DateFormatter.formatWithTime(note.createdAt),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Text(
+                        note.content,
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

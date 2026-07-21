@@ -29,13 +29,13 @@ export default function Terms() {
                     <h2 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight mb-4">
                       1. User Representations
                     </h2>
-                    <p>By using the Site, you represent and warrant that:</p>
+                    <p>By using the app, you represent and warrant that:</p>
                     <ul className="space-y-2 list-none pl-0">
                       {[
-                        "All registration information you submit will be true, accurate, current, and complete.",
-                        "You will maintain the accuracy of such information.",
                         "You meet the age requirements (at least 13 years of age).",
-                        "You will not use the Site for any illegal or unauthorized purpose."
+                        "You will not use the app for any illegal or unauthorized purpose.",
+                        "You are responsible for the content you choose to save in the app.",
+                        "You understand the app has no account system — all data lives only on your device."
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2.5 shrink-0" />
@@ -52,13 +52,11 @@ export default function Terms() {
                     </h2>
                     <div className="bg-zinc-50 dark:bg-zinc-950/50 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 mb-6">
                       <p className="mb-0 font-medium">
-                        You retain full ownership of all notes, data, procedures, and text you upload to MindStore.
-                        We claim no intellectual property rights over the material you provide.
+                        You retain full ownership of all notes, data, and text you save in MindStore.
+                        We claim no intellectual property rights over your content, and we never see it —
+                        it stays on your device and is never uploaded to us.
                       </p>
                     </div>
-                    <p>
-                      By uploading User Content to MindStore, you grant us a license to store and display your User Content strictly as necessary to provide the Service to you.
-                    </p>
                   </div>
 
                   {/* Section 3 */}

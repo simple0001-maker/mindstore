@@ -19,8 +19,8 @@ export default function PrivacyPolicy() {
 
               <div className="prose dark:prose-invert prose-zinc prose-lg max-w-none font-sans">
                 <p className="lead text-xl text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed mb-12">
-                  At MindStore ("we," "our," or "us"), we recognize that your personal memory and knowledge are among your most private assets.
-                  We are committed to protecting your privacy and ensuring you have complete control over your data.
+                  MindStore is built with privacy as the foundation. We believe your personal knowledge is yours alone —
+                  and we designed the app so we never see it.
                 </p>
 
                 <div className="grid gap-12">
@@ -28,12 +28,13 @@ export default function PrivacyPolicy() {
                   <div className="border-b border-zinc-100 dark:border-zinc-800 pb-12">
                     <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-6 flex items-center gap-3">
                       <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-sm font-bold">1</span>
-                      Integration with Your Data
+                      Data Collection: None
                     </h2>
                     <div className="bg-brand-50 dark:bg-brand-900/10 p-6 rounded-2xl border border-brand-100 dark:border-brand-800/30 mb-6">
                       <p className="mb-0 font-medium text-brand-900 dark:text-brand-100">
-                        MindStore is designed as a secure vault for your personal knowledge. Unlike many AI services, <strong>we do not use your private notes,
-                          documents, or procedures to train our public advertising or generative AI models.</strong> Your data remains yours.
+                        <strong>We do not collect any personal data. Period.</strong> No user accounts, no email
+                        addresses, no names, no usage analytics, no crash reporting, no device identifiers, no
+                        location data, no behavioral tracking.
                       </p>
                     </div>
                   </div>
@@ -42,21 +43,21 @@ export default function PrivacyPolicy() {
                   <div className="border-b border-zinc-100 dark:border-zinc-800 pb-12">
                     <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-6 flex items-center gap-3">
                       <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-sm font-bold">2</span>
-                      Information We Collect
+                      Data Storage: Local Only
                     </h2>
-                    <p>We collect information to provide better services to all our users.</p>
+                    <p>All your notes and data are stored exclusively on your device using local storage. There is no account to create and nothing to upload.</p>
 
                     <div className="grid md:grid-cols-2 gap-6 mt-6">
                       <div className="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800">
-                        <h4 className="font-bold text-zinc-900 dark:text-white mb-2">Personal Data</h4>
+                        <h4 className="font-bold text-zinc-900 dark:text-white mb-2">On Your Device</h4>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-0">
-                          Name, email address, and other information you provide when registering.
+                          Your notes never leave your device. No cloud syncing, no external servers, no backups to our systems.
                         </p>
                       </div>
                       <div className="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-100 dark:border-zinc-800">
-                        <h4 className="font-bold text-zinc-900 dark:text-white mb-2">User Content</h4>
+                        <h4 className="font-bold text-zinc-900 dark:text-white mb-2">Search Stays On-Device</h4>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-0">
-                          Notes, documents, and data you upload. Always encrypted and private.
+                          Search runs entirely on your device — no network connection is required and nothing is sent to us.
                         </p>
                       </div>
                     </div>
@@ -66,14 +67,13 @@ export default function PrivacyPolicy() {
                   <div className="border-b border-zinc-100 dark:border-zinc-800 pb-12">
                     <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-6 flex items-center gap-3">
                       <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-sm font-bold">3</span>
-                      How We Use Information
+                      Third-Party Services & Permissions
                     </h2>
+                    <p>The app requests internet access only to:</p>
                     <ul className="space-y-4 list-none pl-0">
                       {[
-                        "Provide specific retrieval functionality you request.",
-                        "Create and manage your secure account.",
-                        "Notify you of important service updates.",
-                        "Prevent fraudulent transactions and enhance security."
+                        "Load Google Fonts, subject to Google's Privacy Policy.",
+                        "Open external links you tap (Privacy Policy, Support).",
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2.5 shrink-0" />
@@ -81,17 +81,19 @@ export default function PrivacyPolicy() {
                         </li>
                       ))}
                     </ul>
+                    <p className="mt-4">We do not use internet access for tracking, analytics, data collection, or advertising.</p>
                   </div>
 
                   {/* Section 4 */}
                   <div className="border-b border-zinc-100 dark:border-zinc-800 pb-12">
                     <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-6 flex items-center gap-3">
                       <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-sm font-bold">4</span>
-                      Data Security
+                      Your Rights & Uninstalling
                     </h2>
                     <p>
-                      We use administrative, technical, and physical security measures to help protect your personal information.
-                      User content is encrypted at rest and in transit.
+                      Since we don&apos;t collect any data, there is nothing for us to request, delete, or modify on your behalf.
+                      You can export your own notes at any time from the Settings screen. If you uninstall MindStore, all local
+                      data is removed from your device per standard OS behavior and is not recoverable.
                     </p>
                   </div>
 
