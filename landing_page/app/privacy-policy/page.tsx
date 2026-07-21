@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
     <main className="min-h-screen bg-white dark:bg-zinc-950">
       <PageHeader
         title="Privacy Policy"
-        description="Last Updated: January 26, 2026"
+        description="Last Updated: July 22, 2026"
       />
 
       <section className="py-20">
